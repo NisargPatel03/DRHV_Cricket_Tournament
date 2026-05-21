@@ -192,10 +192,10 @@ export default function PlayerProfile() {
   if (loadingPlayer) return <Spinner message="Loading player dashboard..." />
   if (!player) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center text-slate-400">
+      <div className="bento-card border border-white/5! p-12 text-center text-slate-450">
         <User className="w-10 h-10 mx-auto text-red-500 mb-2 animate-pulse" />
-        <p className="font-bold">Player Record Not Found</p>
-        <Link to="/players" className="text-emerald-400 font-semibold mt-4 block hover:underline">
+        <p className="font-extrabold text-white">Player Record Not Found</p>
+        <Link to="/players" className="text-emerald-450 font-black mt-4 block hover:underline">
           &larr; Back to Standings leaderboards
         </Link>
       </div>
@@ -215,11 +215,11 @@ export default function PlayerProfile() {
   return (
     <div className="space-y-8">
       {/* 1. PROFILE HEADER CARD */}
-      <section className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8">
+      <section className="bento-card relative overflow-hidden border border-white/5! p-6 md:p-10 flex flex-col md:flex-row items-center gap-8">
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/[0.02] to-transparent pointer-events-none"></div>
 
         {/* Big jersey avatar */}
-        <div className="w-24 h-24 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center shrink-0 shadow-lg relative overflow-hidden text-center group">
+        <div className="w-24 h-24 rounded-2xl bg-slate-950/45 border border-white/5 flex flex-col items-center justify-center shrink-0 shadow-lg relative overflow-hidden text-center group">
           <span className="block text-[10px] text-slate-500 font-extrabold uppercase tracking-widest mt-1">Jersey</span>
           <span className="block text-3xl font-black text-emerald-400 leading-none my-1">
             {player.jersey_number || '#'}
@@ -230,7 +230,7 @@ export default function PlayerProfile() {
             </span>
           )}
           {player.is_vice_captain && !player.is_captain && (
-            <span className="absolute bottom-0 inset-x-0 bg-slate-800 text-slate-400 font-black text-[9px] py-0.5 tracking-wider uppercase">
+            <span className="absolute bottom-0 inset-x-0 bg-slate-805 text-slate-400 font-black text-[9px] py-0.5 tracking-wider uppercase">
               Vice Capt
             </span>
           )}
@@ -238,7 +238,7 @@ export default function PlayerProfile() {
 
         {/* Bio */}
         <div className="text-center md:text-left space-y-2">
-          <h1 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight leading-tight">
+          <h1 className="text-2xl md:text-4xl font-black text-white tracking-tight leading-tight">
             {player.name}
           </h1>
           
@@ -246,7 +246,7 @@ export default function PlayerProfile() {
             {player.team ? (
               <Link
                 to={`/team/${player.team_id}`}
-                className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-bold hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs text-emerald-445 font-black hover:underline"
               >
                 <Shield className="w-4 h-4 shrink-0" />
                 <span>
@@ -254,10 +254,10 @@ export default function PlayerProfile() {
                 </span>
               </Link>
             ) : (
-              <span className="text-slate-500 text-xs font-bold">Unassigned Free Agent</span>
+              <span className="text-slate-550 text-xs font-black">Unassigned Free Agent</span>
             )}
             <span className="text-slate-700 text-sm hidden sm:inline">•</span>
-            <span className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
+            <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">
               {player.role.replace('_', ' ')}
             </span>
           </div>
@@ -267,107 +267,113 @@ export default function PlayerProfile() {
       {/* 2. STATS SUMMARIES GRID */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Batting Card */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
-          <h2 className="text-sm font-extrabold text-white uppercase tracking-widest border-b border-slate-800 pb-2 flex items-center gap-2">
+        <div className="bento-card border border-white/5! p-6 space-y-4">
+          <h2 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/5 pb-2 flex items-center gap-2">
             🏏 Batting Stats
           </h2>
           {battingStats ? (
             <div className="grid grid-cols-3 gap-y-4 gap-x-2 text-center">
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Matches</span>
-                <span className="text-base font-extrabold text-white">{battingStats.matches}</span>
+                <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Matches</span>
+                <span className="text-base font-black text-white">{battingStats.matches}</span>
               </div>
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Runs</span>
-                <span className="text-base font-extrabold text-white">{battingStats.runs}</span>
+                <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Total Runs</span>
+                <span className="text-base font-black text-white">{battingStats.runs}</span>
               </div>
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">High Score</span>
-                <span className="text-base font-extrabold text-amber-400">{battingStats.high_score}</span>
+                <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">High Score</span>
+                <span className="text-base font-black text-amber-450">{battingStats.high_score}</span>
               </div>
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Average</span>
-                <span className="text-base font-extrabold text-white">{battingStats.batting_average}</span>
+                <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Average</span>
+                <span className="text-base font-black text-white">{battingStats.batting_average}</span>
               </div>
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Strike Rate</span>
-                <span className="text-base font-extrabold text-white">{battingStats.strike_rate}</span>
+                <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Strike Rate</span>
+                <span className="text-base font-black text-white">{battingStats.strike_rate}</span>
               </div>
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">50s / 100s</span>
-                <span className="text-base font-extrabold text-amber-500">
+                <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">50s / 100s</span>
+                <span className="text-base font-black text-amber-500">
                   {battingStats.fifties} / {battingStats.hundreds}
                 </span>
               </div>
             </div>
           ) : (
-            <p className="text-xs text-slate-500 py-4 text-center">No batting statistics logged</p>
+            <p className="text-xs text-slate-550 py-4 text-center">No batting statistics logged</p>
           )}
         </div>
 
         {/* Bowling Card */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
-          <h2 className="text-sm font-extrabold text-white uppercase tracking-widest border-b border-slate-800 pb-2 flex items-center gap-2">
+        <div className="bento-card border border-white/5! p-6 space-y-4">
+          <h2 className="text-sm font-black text-white uppercase tracking-widest border-b border-white/5 pb-2 flex items-center gap-2">
             🥎 Bowling Stats
           </h2>
           {bowlingStats ? (
             <div className="grid grid-cols-3 gap-y-4 gap-x-2 text-center">
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Matches</span>
-                <span className="text-base font-extrabold text-white">{bowlingStats.matches}</span>
+                <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Matches</span>
+                <span className="text-base font-black text-white">{bowlingStats.matches}</span>
               </div>
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Wickets</span>
-                <span className="text-base font-extrabold text-purple-400">{bowlingStats.wickets}</span>
+                <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Wickets</span>
+                <span className="text-base font-black text-purple-400">{bowlingStats.wickets}</span>
               </div>
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Overs</span>
-                <span className="text-base font-extrabold text-white">{bowlingStats.overs}</span>
+                <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Overs</span>
+                <span className="text-base font-black text-white">{bowlingStats.overs}</span>
               </div>
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Conceded</span>
-                <span className="text-base font-extrabold text-white">{bowlingStats.runs_conceded}</span>
+                <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Conceded</span>
+                <span className="text-base font-black text-white">{bowlingStats.runs_conceded}</span>
               </div>
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Economy</span>
-                <span className="text-base font-extrabold text-white">{bowlingStats.economy_rate}</span>
+                <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Economy</span>
+                <span className="text-base font-black text-white">{bowlingStats.economy_rate}</span>
               </div>
               <div>
-                <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Best Bowl</span>
-                <span className="text-base font-extrabold text-purple-400">{bowlingStats.best_bowling}</span>
+                <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Best Bowl</span>
+                <span className="text-base font-black text-purple-400">{bowlingStats.best_bowling}</span>
               </div>
             </div>
           ) : (
-            <p className="text-xs text-slate-500 py-4 text-center">No bowling statistics logged</p>
+            <p className="text-xs text-slate-550 py-4 text-center">No bowling statistics logged</p>
           )}
         </div>
       </section>
 
       {/* 3. RECHARTS RUN PROGRESSION LINE GRAPH */}
       {chartData.length > 1 && (
-        <section className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
-          <h2 className="text-sm font-extrabold text-white uppercase tracking-widest flex items-center gap-1.5">
-            <TrendingUp className="w-4 h-4 text-emerald-400" /> Runs Progression Chart
+        <section className="bento-card border border-white/5! p-6 space-y-4">
+          <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-1.5">
+            <TrendingUp className="w-4 h-4 text-emerald-445" /> Runs Progression Chart
           </h2>
           
           <div className="w-full h-64 mt-4">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 10, right: 10, left: -25, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <defs>
+                  <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#10b981" floodOpacity="0.6" />
+                  </filter>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                 <XAxis dataKey="match" stroke="#64748b" fontSize={10} tickLine={false} />
                 <YAxis stroke="#64748b" fontSize={10} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', borderRadius: '8px' }}
-                  labelStyle={{ fontWeight: 'bold', color: '#fff', fontSize: '12px' }}
-                  itemStyle={{ color: '#22c55e', fontSize: '12px' }}
+                  contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.95)', borderColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '16px', backdropFilter: 'blur(8px)' }}
+                  labelStyle={{ fontWeight: 'black', color: '#fff', fontSize: '12px' }}
+                  itemStyle={{ color: '#10b981', fontSize: '12px' }}
                 />
                 <Line
                   type="monotone"
                   dataKey="runs"
-                  stroke="#22c55e"
+                  stroke="#10b981"
                   strokeWidth={3}
+                  filter="url(#neon-glow)"
                   activeDot={{ r: 6 }}
-                  dot={{ stroke: '#22c55e', strokeWidth: 2, r: 4, fill: '#0f172a' }}
+                  dot={{ stroke: '#10b981', strokeWidth: 2, r: 4, fill: '#0a0f1d' }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -377,53 +383,53 @@ export default function PlayerProfile() {
 
       {/* 4. MATCH-BY-MATCH DETAILED LOG */}
       <section className="space-y-4">
-        <h2 className="text-base font-extrabold text-white uppercase tracking-widest flex items-center gap-1.5">
-          <BarChart3 className="w-4 h-4 text-emerald-400" /> Match logs
+        <h2 className="text-base font-black text-white uppercase tracking-widest flex items-center gap-1.5">
+          <BarChart3 className="w-4 h-4 text-emerald-445" /> Match logs
         </h2>
 
         {loadingLogs ? (
           <Spinner message="Summing playing log totals..." />
         ) : matchLog && matchLog.length > 0 ? (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div className="bento-card overflow-hidden p-0! border border-white/5!">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs md:text-sm">
                 <thead>
-                  <tr className="bg-slate-950/80 text-slate-400 font-extrabold uppercase tracking-widest text-[9px] border-b border-slate-800">
+                  <tr className="bg-slate-950/40 text-slate-400 font-extrabold uppercase tracking-widest text-[9px] border-b border-white/5">
                     <th className="py-3 px-4">Date</th>
                     <th className="py-3 px-2">Opponent</th>
-                    <th className="py-3 px-2 text-center border-l border-slate-800/40">Bat Runs</th>
+                    <th className="py-3 px-2 text-center border-l border-white/5">Bat Runs</th>
                     <th className="py-3 px-2 text-center">Balls</th>
                     <th className="py-3 px-2 text-center">Dismissal</th>
-                    <th className="py-3 px-2 text-center border-l border-slate-800/40">Overs</th>
+                    <th className="py-3 px-2 text-center border-l border-white/5">Overs</th>
                     <th className="py-3 px-2 text-center">Runs Conc</th>
                     <th className="py-3 px-4 text-center">Wickets</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/50">
+                <tbody className="divide-y divide-white/5">
                   {matchLog.map((log) => (
-                    <tr key={log.matchId} className="hover:bg-slate-950/20 transition-colors">
+                    <tr key={log.matchId} className="hover:bg-white/[0.01] transition-colors">
                       <td className="py-3 px-4 font-bold text-slate-400">{log.date}</td>
-                      <td className="py-3 px-2 font-bold text-slate-200 uppercase">vs {log.opponent}</td>
+                      <td className="py-3 px-2 font-black text-slate-200 uppercase">vs {log.opponent}</td>
                       
                       {/* Batting log */}
-                      <td className="py-3 px-2 text-center font-extrabold text-emerald-400 border-l border-slate-800/40">
+                      <td className="py-3 px-2 text-center font-extrabold text-emerald-450 border-l border-white/5">
                         {log.batRuns !== null ? log.batRuns : '-'}
                       </td>
-                      <td className="py-3 px-2 text-center text-slate-300 font-medium">
+                      <td className="py-3 px-2 text-center text-slate-350 font-bold">
                         {log.batBalls !== null ? log.batBalls : '-'}
                       </td>
-                      <td className="py-3 px-2 text-center text-slate-400 text-xs">
+                      <td className="py-3 px-2 text-center text-slate-450 font-semibold text-xs">
                         {log.batOutStatus || '-'}
                       </td>
-
+ 
                       {/* Bowling log */}
-                      <td className="py-3 px-2 text-center font-semibold text-slate-300 border-l border-slate-800/40">
+                      <td className="py-3 px-2 text-center font-bold text-slate-300 border-l border-white/5">
                         {log.bowlOvers !== null ? log.bowlOvers : '-'}
                       </td>
-                      <td className="py-3 px-2 text-center text-slate-300">
+                      <td className="py-3 px-2 text-center text-slate-350">
                         {log.bowlRunsConceded !== null ? log.bowlRunsConceded : '-'}
                       </td>
-                      <td className="py-3 px-4 text-center font-extrabold text-purple-400">
+                      <td className="py-3 px-4 text-center font-black text-purple-400">
                         {log.bowlWickets !== null ? log.bowlWickets : '-'}
                       </td>
                     </tr>
@@ -433,8 +439,8 @@ export default function PlayerProfile() {
             </div>
           </div>
         ) : (
-          <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-8 text-center text-slate-500">
-            <BarChart3 className="w-8 h-8 mx-auto text-slate-700 mb-2" />
+          <div className="bento-card border border-white/5! p-8 text-center text-slate-450">
+            <BarChart3 className="w-8 h-8 mx-auto text-slate-655 mb-2" />
             <p className="text-xs font-semibold">No tournament match logs available for this player.</p>
           </div>
         )}

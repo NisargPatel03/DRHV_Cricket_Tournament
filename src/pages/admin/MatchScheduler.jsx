@@ -172,10 +172,32 @@ export default function MatchScheduler() {
   }
 
   const getStatusBadge = (status) => {
-    if (status === 'completed') return 'bg-emerald-50 text-emerald-700 border-emerald-200'
-    if (status === 'live') return 'bg-red-50 text-red-700 border-red-200 animate-pulse'
-    if (status === 'abandoned') return 'bg-slate-100 text-slate-600 border-slate-200'
-    return 'bg-blue-50 text-blue-700 border-blue-200'
+    if (status === 'completed') {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-950/40 border border-emerald-500/20 rounded-lg text-[10px] font-black text-emerald-450 uppercase tracking-widest">
+          <span className="led-indicator led-green mr-0 shrink-0" /> Completed
+        </span>
+      )
+    }
+    if (status === 'live') {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-950/40 border border-red-500/20 rounded-lg text-[10px] font-black text-red-400 uppercase tracking-widest animate-pulse">
+          <span className="led-indicator led-red mr-0 shrink-0" /> Live
+        </span>
+      )
+    }
+    if (status === 'abandoned') {
+      return (
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-900 border border-white/10 rounded-lg text-[10px] font-black text-slate-400 uppercase tracking-widest">
+          <span className="led-indicator led-amber mr-0 shrink-0" /> Abandoned
+        </span>
+      )
+    }
+    return (
+      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-950/40 border border-blue-500/20 rounded-lg text-[10px] font-black text-blue-400 uppercase tracking-widest">
+        <span className="led-indicator led-blue mr-0 shrink-0" /> Upcoming
+      </span>
+    )
   }
 
   return (
@@ -185,10 +207,10 @@ export default function MatchScheduler() {
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-md w-full px-4 animate-scaleUp">
           <div className={`flex items-start gap-3 p-4 rounded-2xl border shadow-xl backdrop-blur-md transition-all duration-350 ${
             alertConfig.type === 'success' 
-              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700' 
+              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
               : alertConfig.type === 'error' 
-              ? 'bg-red-500/10 border-red-500/20 text-red-700' 
-              : 'bg-amber-500/10 border-amber-500/20 text-amber-700'
+              ? 'bg-red-500/10 border-red-500/20 text-red-400' 
+              : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
           }`}>
             <span className="text-lg">
               {alertConfig.type === 'success' ? '✅' : alertConfig.type === 'error' ? '❌' : '⚠️'}
@@ -212,8 +234,8 @@ export default function MatchScheduler() {
       {/* Header Controls */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Fixtures & Scheduling</h1>
-          <p className="text-slate-500 text-xs">Configure match rules, stages, dates, and assign official scorers</p>
+          <h1 className="text-2xl font-black text-white tracking-tight uppercase">Fixtures & Scheduling</h1>
+          <p className="text-slate-400 text-xs font-semibold">Configure match rules, stages, dates, and assign official scorers</p>
         </div>
 
         <button
@@ -226,8 +248,8 @@ export default function MatchScheduler() {
 
       {/* Add Match Panel */}
       {showAddForm && (
-        <form onSubmit={handleAddSubmit} className="bg-white border border-slate-200 p-6 rounded-2xl space-y-4 shadow-md">
-          <h2 className="text-xs font-bold text-slate-700 uppercase tracking-widest border-b border-slate-100 pb-2">
+        <form onSubmit={handleAddSubmit} className="telemetry-card p-6 space-y-4">
+          <h2 className="text-xs font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2">
             Schedule New Match
           </h2>
 
@@ -239,7 +261,7 @@ export default function MatchScheduler() {
               </label>
               <select
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                 value={team1Id}
                 onChange={(e) => setTeam1Id(e.target.value)}
               >
@@ -259,7 +281,7 @@ export default function MatchScheduler() {
               </label>
               <select
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                 value={team2Id}
                 onChange={(e) => setTeam2Id(e.target.value)}
               >
@@ -278,7 +300,7 @@ export default function MatchScheduler() {
                 Tournament Stage
               </label>
               <select
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                 value={stage}
                 onChange={(e) => setStage(e.target.value)}
               >
@@ -296,7 +318,7 @@ export default function MatchScheduler() {
               <input
                 type="date"
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                 value={matchDate}
                 onChange={(e) => setMatchDate(e.target.value)}
               />
@@ -310,7 +332,7 @@ export default function MatchScheduler() {
               <input
                 type="time"
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                 value={matchTime}
                 onChange={(e) => setMatchTime(e.target.value)}
               />
@@ -326,7 +348,7 @@ export default function MatchScheduler() {
                 required
                 min={1}
                 max={50}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                 value={oversLimit}
                 onChange={(e) => setOversLimit(e.target.value)}
               />
@@ -340,7 +362,7 @@ export default function MatchScheduler() {
               <input
                 type="text"
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                 value={venue}
                 onChange={(e) => setVenue(e.target.value)}
               />
@@ -352,7 +374,7 @@ export default function MatchScheduler() {
                 Assign Scorer Official
               </label>
               <select
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                 value={assignedScorerId}
                 onChange={(e) => setAssignedScorerId(e.target.value)}
               >
@@ -370,7 +392,7 @@ export default function MatchScheduler() {
             <button
               type="button"
               onClick={() => setShowAddForm(false)}
-              className="bg-slate-100 hover:bg-slate-200 text-slate-500 text-xs font-bold uppercase py-2 px-4 rounded-xl"
+              className="bg-slate-900 hover:bg-slate-850 text-slate-400 border border-white/10 text-xs font-bold uppercase py-2 px-4 rounded-xl"
             >
               Cancel
             </button>
@@ -387,9 +409,9 @@ export default function MatchScheduler() {
 
       {/* Editing overlay modal */}
       {editingMatch && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <form onSubmit={handleEditSubmit} className="bg-white border border-slate-200 p-6 rounded-2xl w-full max-w-lg space-y-4 shadow-2xl animate-scaleUp">
-            <h2 className="text-xs font-bold text-slate-700 uppercase tracking-widest border-b border-slate-100 pb-2">
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <form onSubmit={handleEditSubmit} className="telemetry-card p-6 w-full max-w-lg space-y-4 shadow-2xl animate-scaleUp border border-white/15">
+            <h2 className="text-xs font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2">
               Edit Match Details
             </h2>
 
@@ -402,7 +424,7 @@ export default function MatchScheduler() {
                   <input
                     type="date"
                     required
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                     value={editingMatch.match_date}
                     onChange={(e) => setEditingMatch({ ...editingMatch, match_date: e.target.value })}
                   />
@@ -415,7 +437,7 @@ export default function MatchScheduler() {
                   <input
                     type="time"
                     required
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                     value={editingMatch.match_time.substring(0, 5)}
                     onChange={(e) => setEditingMatch({ ...editingMatch, match_time: e.target.value + ':00' })}
                   />
@@ -430,7 +452,7 @@ export default function MatchScheduler() {
                   <input
                     type="number"
                     required
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                     value={editingMatch.overs_limit}
                     onChange={(e) => setEditingMatch({ ...editingMatch, overs_limit: e.target.value })}
                   />
@@ -441,7 +463,7 @@ export default function MatchScheduler() {
                     Status State
                   </label>
                   <select
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                     value={editingMatch.status}
                     onChange={(e) => setEditingMatch({ ...editingMatch, status: e.target.value })}
                   >
@@ -460,7 +482,7 @@ export default function MatchScheduler() {
                 <input
                   type="text"
                   required
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                   value={editingMatch.venue}
                   onChange={(e) => setEditingMatch({ ...editingMatch, venue: e.target.value })}
                 />
@@ -471,7 +493,7 @@ export default function MatchScheduler() {
                   Assigned Scorer
                 </label>
                 <select
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                   value={editingMatch.scorer_id || ''}
                   onChange={(e) => setEditingMatch({ ...editingMatch, scorer_id: e.target.value })}
                 >
@@ -489,7 +511,7 @@ export default function MatchScheduler() {
               <button
                 type="button"
                 onClick={() => setEditingMatch(null)}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-500 text-xs font-bold uppercase py-2 px-4 rounded-xl"
+                className="bg-slate-900 hover:bg-slate-850 text-slate-400 border border-white/10 text-xs font-bold uppercase py-2 px-4 rounded-xl"
               >
                 Cancel
               </button>
@@ -508,48 +530,48 @@ export default function MatchScheduler() {
       {isLoading ? (
         <Spinner message="Loading scheduled matches..." />
       ) : matches && matches.length > 0 ? (
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="telemetry-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-widest text-[9px] border-b border-slate-200">
-                  <th className="py-3.5 px-5">Match fixture</th>
-                  <th className="py-3.5 px-2">Stage</th>
-                  <th className="py-3.5 px-2">Date & Time</th>
-                  <th className="py-3.5 px-2">Venue</th>
-                  <th className="py-3.5 px-2">Scorer assigned</th>
-                  <th className="py-3.5 px-2 text-center">Status</th>
-                  <th className="py-3.5 px-5 text-right w-32">Actions</th>
+                <tr className="bg-white/5 text-slate-450 font-black uppercase tracking-widest text-[9px] border-b border-white/10">
+                  <th className="py-4 px-5">Match fixture</th>
+                  <th className="py-4 px-2">Stage</th>
+                  <th className="py-4 px-2">Date & Time</th>
+                  <th className="py-4 px-2">Venue</th>
+                  <th className="py-4 px-2">Scorer assigned</th>
+                  <th className="py-4 px-2 text-center">Status</th>
+                  <th className="py-4 px-5 text-right w-32">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-white/10">
                 {matches.map((match) => (
-                  <tr key={match.id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr key={match.id} className="hover:bg-white/[0.02] transition-colors">
                     {/* Teams */}
-                    <td className="py-4 px-5 font-bold text-slate-700">
+                    <td className="py-4 px-5 font-bold text-slate-200">
                       {match.team1?.short_name} vs {match.team2?.short_name}
                     </td>
 
                     {/* Stage */}
-                    <td className="py-4 px-2 font-bold text-slate-500 uppercase text-[9px] tracking-wider">
+                    <td className="py-4 px-2 font-black text-slate-450 uppercase text-[9px] tracking-widest">
                       {match.stage}
                     </td>
 
                     {/* Date Time */}
-                    <td className="py-4 px-2 text-slate-500">
+                    <td className="py-4 px-2 text-slate-400">
                       {new Date(match.match_date).toLocaleDateString('en-US')} @ {match.match_time.substring(0, 5)}
                     </td>
 
                     {/* Venue */}
-                    <td className="py-4 px-2 text-slate-500 font-medium truncate max-w-[120px]">
+                    <td className="py-4 px-2 text-slate-455 font-semibold truncate max-w-[120px]">
                       {match.venue}
                     </td>
 
                     {/* Scorer */}
-                    <td className="py-4 px-2 font-semibold text-slate-600">
+                    <td className="py-4 px-2 font-semibold text-slate-200">
                       {match.scorer ? (
                         <span className="flex items-center gap-1">
-                          <UserCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                          <UserCheck className="w-3.5 h-3.5 text-emerald-450 shrink-0" />
                           {match.scorer.full_name}
                         </span>
                       ) : (
@@ -559,9 +581,7 @@ export default function MatchScheduler() {
 
                     {/* Status */}
                     <td className="py-4 px-2 text-center">
-                      <span className={`inline-block px-2.5 py-0.5 border rounded-full font-bold uppercase text-[9px] tracking-wider ${getStatusBadge(match.status)}`}>
-                        {match.status}
-                      </span>
+                      {getStatusBadge(match.status)}
                     </td>
 
                     {/* Actions */}
@@ -569,7 +589,7 @@ export default function MatchScheduler() {
                       <div className="flex gap-2 justify-end">
                         <button
                           onClick={() => setEditingMatch(match)}
-                          className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg"
+                          className="p-1.5 bg-slate-900 hover:bg-slate-850 text-slate-400 border border-white/10 rounded-lg"
                           title="Edit Details"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
@@ -581,7 +601,7 @@ export default function MatchScheduler() {
                               deleteMatchMutation.mutate(match.id)
                             }
                           }}
-                          className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg"
+                          className="p-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 rounded-lg"
                           title="Delete Fixture"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -595,8 +615,8 @@ export default function MatchScheduler() {
           </div>
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-2xl p-16 text-center text-slate-400 shadow-sm">
-          <CalendarDays className="w-10 h-10 mx-auto text-slate-300 mb-2" />
+        <div className="telemetry-card p-16 text-center text-slate-400">
+          <CalendarDays className="w-10 h-10 mx-auto text-slate-500 mb-2" />
           <p className="text-sm font-semibold">No scheduled tournament fixtures.</p>
           <p className="text-xs text-slate-500 mt-1">
             Click "Schedule New Match" above to register the first match of the tournament.

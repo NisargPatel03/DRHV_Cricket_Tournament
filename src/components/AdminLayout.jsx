@@ -29,71 +29,83 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex text-slate-800">
+    <div className="min-h-screen carbon-telemetry-canvas flex text-slate-100 relative overflow-hidden">
+      {/* Absolute Admin Ambient Canvas Blobs */}
+      <div className="fixed w-[500px] h-[500px] rounded-full bg-emerald-500/[0.02] top-[-100px] right-[-100px] filter blur-[80px] pointer-events-none z-0 animate-float-slow"></div>
+      <div className="fixed w-[600px] h-[600px] rounded-full bg-blue-500/[0.02] bottom-[-200px] left-[-200px] filter blur-[100px] pointer-events-none z-0 animate-float-reverse"></div>
+ 
       {/* 1. LEFT SIDEBAR FOR DESKTOP */}
-      <aside className="hidden md:flex flex-col w-64 bg-slate-900 text-slate-400 shrink-0 border-r border-slate-800">
+      <aside className="hidden md:flex flex-col w-64 bg-[#090e18] text-slate-450 shrink-0 border-r border-white/10 relative z-10 shadow-[4px_0_24px_rgba(0,0,0,0.5)]">
         {/* Brand Header */}
-        <div className="p-6 border-b border-slate-800/60 flex items-center gap-3">
+        <div className="p-6 border-b border-white/10 flex items-center gap-3">
           <img
             src="/logo.png"
             alt="DRHV Admin Logo"
-            className="w-8 h-8 object-contain rounded bg-slate-800/40 p-0.5 border border-slate-700/50 shrink-0"
+            className="w-8 h-8 object-contain rounded-xl bg-slate-900 border border-white/15 p-0.5 shrink-0"
           />
           <div>
-            <span className="font-extrabold text-white text-sm block leading-none uppercase tracking-wide">
+            <span className="font-black text-white text-sm block leading-none uppercase tracking-widest">
               DRHV Admin
             </span>
-            <span className="text-[9px] text-emerald-400 font-bold uppercase tracking-widest block mt-0.5">
-              Tournament Portal
+            <span className="text-[9px] text-emerald-450 font-black uppercase tracking-widest block mt-0.5 flex items-center gap-1">
+              <span className="led-indicator led-green mr-0" /> Portal Active
             </span>
           </div>
         </div>
-
+ 
         {/* Navigation Menu */}
         <nav className="flex-1 px-4 py-6 space-y-2">
-          {adminMenu.map((item) => (
-            <Link
-              key={item.label}
-              to={item.path}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all border-l-2 ${
-                isActive(item.path)
-                  ? 'bg-slate-800/80 border-l-emerald-500 text-white'
-                  : 'border-l-transparent hover:bg-slate-800/40 hover:text-slate-200'
-              }`}
-            >
-              <item.icon className="w-4 h-4 shrink-0" />
-              <span>{item.label}</span>
-            </Link>
-          ))}
+          {adminMenu.map((item) => {
+            const active = isActive(item.path)
+            return (
+              <Link
+                key={item.label}
+                to={item.path}
+                className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                  active
+                    ? 'bg-slate-950/80 border-white/10 text-white shadow-[inset_0_1px_3px_rgba(255,255,255,0.05),0_0_12px_rgba(16,185,129,0.05)]'
+                    : 'bg-transparent text-slate-450 hover:bg-slate-900/40 hover:text-slate-100 border-transparent'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <item.icon className={`w-4 h-4 shrink-0 ${active ? 'text-emerald-400' : 'text-slate-500'}`} />
+                  <span>{item.label}</span>
+                </div>
+                {active && (
+                  <span className="led-indicator led-green mr-0 shrink-0" />
+                )}
+              </Link>
+            )
+          })}
         </nav>
-
+ 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-slate-800/60 space-y-3">
+        <div className="p-4 border-t border-white/10 space-y-3">
           <div className="flex items-center gap-3 px-2">
-            <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-emerald-400 text-xs">
+            <div className="w-8 h-8 rounded-full bg-slate-900 border border-white/10 flex items-center justify-center font-black text-emerald-400 text-xs">
               {profile?.full_name?.substring(0, 2).toUpperCase() || 'AD'}
             </div>
             <div className="min-w-0">
-              <span className="block text-xs font-bold text-slate-200 truncate">
+              <span className="block text-xs font-extrabold text-slate-200 truncate">
                 {profile?.full_name || 'Admin User'}
               </span>
-              <span className="block text-[9px] text-slate-500 uppercase tracking-wider">
+              <span className="block text-[9px] text-slate-500 uppercase tracking-widest font-bold">
                 {profile?.role}
               </span>
             </div>
           </div>
-
+ 
           <Link
             to="/"
-            className="flex items-center gap-2 text-[10px] text-slate-400 hover:text-white font-bold uppercase tracking-wider px-2 py-1 bg-slate-850 hover:bg-slate-800 rounded-lg transition-colors border border-slate-800/80"
+            className="flex items-center justify-center gap-2 text-[10px] text-slate-400 hover:text-white font-black uppercase tracking-widest px-2 py-2 bg-slate-900 border border-white/10 rounded-lg transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Viewer Portal</span>
           </Link>
-
+ 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider hover:bg-red-500/10 hover:text-red-400 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-red-500/10 hover:text-red-400 transition-colors"
           >
             <LogOut className="w-4 h-4" />
             <span>Logout</span>
@@ -102,15 +114,15 @@ export default function AdminLayout() {
       </aside>
 
       {/* 2. MOBILE HEADER & NAVIGATION */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="md:hidden bg-slate-900 text-white p-4 flex items-center justify-between border-b border-slate-800">
+      <div className="flex-1 flex flex-col min-w-0 relative z-10">
+        <header className="md:hidden bg-slate-950/60 backdrop-blur-xl text-white p-4 flex items-center justify-between border-b border-white/5">
           <div className="flex items-center gap-3">
             <img
               src="/logo.png"
               alt="DRHV Admin Logo"
-              className="w-8 h-8 object-contain rounded bg-slate-800/40 p-0.5 border border-slate-700/50 shrink-0"
+              className="w-8 h-8 object-contain rounded bg-slate-800/40 p-0.5 border border-white/10 shrink-0"
             />
-            <span className="font-extrabold text-sm tracking-wider uppercase">DRHV Admin</span>
+            <span className="font-black text-sm tracking-widest uppercase">DRHV Admin</span>
           </div>
 
           <button
@@ -125,7 +137,7 @@ export default function AdminLayout() {
         {mobileSidebarOpen && (
           <div className="md:hidden fixed inset-0 z-50 bg-slate-950/98 pt-20 px-6 flex flex-col gap-6">
             <div className="flex flex-col gap-4">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
                 Admin Controls
               </span>
               {adminMenu.map((item) => (
@@ -133,7 +145,7 @@ export default function AdminLayout() {
                   key={item.label}
                   to={item.path}
                   onClick={() => setMobileSidebarOpen(false)}
-                  className={`flex items-center gap-3 py-2 text-base font-semibold uppercase tracking-wider border-b border-slate-900 ${
+                  className={`flex items-center gap-3 py-2 text-base font-black uppercase tracking-widest border-b border-white/5 ${
                     isActive(item.path) ? 'text-emerald-400 font-bold' : 'text-slate-300'
                   }`}
                 >
@@ -143,16 +155,16 @@ export default function AdminLayout() {
               ))}
             </div>
 
-            <div className="mt-auto mb-20 flex flex-col gap-4 border-t border-slate-800 pt-6">
+            <div className="mt-auto mb-20 flex flex-col gap-4 border-t border-white/5 pt-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center font-bold text-emerald-400 text-sm">
+                <div className="w-10 h-10 rounded-full bg-slate-900 border border-white/5 flex items-center justify-center font-black text-emerald-400 text-sm">
                   {profile?.full_name?.substring(0, 2).toUpperCase() || 'AD'}
                 </div>
                 <div>
-                  <span className="block text-sm font-bold text-white">
+                  <span className="block text-sm font-extrabold text-white">
                     {profile?.full_name}
                   </span>
-                  <span className="block text-xs text-slate-500 uppercase tracking-wider font-semibold">
+                  <span className="block text-xs text-slate-550 uppercase tracking-widest font-black">
                     System Admin
                   </span>
                 </div>
@@ -162,7 +174,7 @@ export default function AdminLayout() {
                 <Link
                   to="/"
                   onClick={() => setMobileSidebarOpen(false)}
-                  className="bg-slate-800 hover:bg-slate-700 text-white text-center text-xs font-bold py-2.5 rounded-xl border border-slate-700"
+                  className="bg-slate-900 hover:bg-slate-800 text-white text-center text-xs font-black py-2.5 rounded-xl border border-white/5"
                 >
                   View App
                 </Link>
@@ -171,7 +183,7 @@ export default function AdminLayout() {
                     setMobileSidebarOpen(false)
                     handleLogout()
                   }}
-                  className="bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold py-2.5 rounded-xl border border-red-500/30"
+                  className="bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-black py-2.5 rounded-xl border border-red-500/30"
                 >
                   Logout
                 </button>

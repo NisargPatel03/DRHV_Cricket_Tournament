@@ -624,36 +624,36 @@ export default function LiveScoring() {
   if (match.status === 'completed' || match.status === 'abandoned') {
     return (
       <div className="space-y-6 relative max-w-xl mx-auto py-12">
-        <Link to="/scorer" className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to Assigned Roster
+        <Link to="/scorer" className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors font-mono">
+          <ArrowLeft className="w-4 h-4 stroke-[3]" /> Back to Assigned Roster
         </Link>
 
-        <div className="bg-white border-2 border-slate-200 rounded-2xl p-8 md:p-12 text-center space-y-6 shadow-sm relative overflow-hidden">
-          <div className="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mx-auto shadow-inner text-2xl">
+        <div className="neo-brutalist-card-black p-8 md:p-12 text-center space-y-6 shadow-[8px_8px_0_#eab308]">
+          <div className="w-16 h-16 bg-slate-900 border-2 border-black flex items-center justify-center mx-auto shadow-[3px_3px_0_#000] text-2xl rounded-none">
             🔒
           </div>
           
           <div className="space-y-2">
-            <span className="text-[10px] bg-slate-100 text-slate-500 font-extrabold px-2.5 py-1 rounded border border-slate-200 uppercase tracking-widest inline-block">
+            <span className="text-[10px] bg-slate-800 text-yellow-400 font-black px-2.5 py-1 border-2 border-black uppercase tracking-wider inline-block font-mono">
               Match {match.status}
             </span>
-            <h1 className="text-xl font-black text-slate-800 uppercase tracking-tight mt-2">Scoring Console Locked</h1>
-            <p className="text-slate-400 text-xs leading-relaxed max-w-sm mx-auto">
+            <h1 className="text-xl font-black text-white uppercase tracking-tight mt-2">Scoring Console Locked</h1>
+            <p className="text-slate-400 text-xs leading-relaxed max-w-sm mx-auto font-mono">
               This match has already been marked as <strong>{match.status}</strong>. The live scoring dashboard has been archived and is read-only.
             </p>
           </div>
 
           {match.result_margin && (
-            <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-xs font-bold text-emerald-800 flex items-center justify-center gap-2 max-w-sm mx-auto">
-              <Award className="w-4 h-4 shrink-0 text-emerald-600" />
+            <div className="bg-emerald-500 border-2 border-black text-xs font-black text-black py-3 px-4 flex items-center justify-center gap-2 max-w-sm mx-auto shadow-[3px_3px_0_#000]">
+              <Award className="w-4 h-4 shrink-0 text-black stroke-[3]" />
               <span>{match.result_margin}</span>
             </div>
           )}
 
-          <div className="pt-4 border-t border-slate-100">
+          <div className="pt-4 border-t-2 border-black">
             <Link
               to="/scorer"
-              className="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-xs uppercase tracking-wider py-3 px-6 rounded-xl transition-colors shadow-md"
+              className="inline-flex items-center gap-1.5 bg-yellow-500 hover:bg-yellow-600 text-black font-black text-xs uppercase tracking-wider py-3 px-6 rounded-none transition-all neo-brutalist-btn"
             >
               Return to Assigned Roster
             </Link>
@@ -670,62 +670,62 @@ export default function LiveScoring() {
         {/* Premium Toast Notification Banner */}
         {alertConfig && (
           <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-md w-full px-4 animate-scaleUp">
-            <div className={`flex items-start gap-3 p-4 rounded-2xl border shadow-xl backdrop-blur-md transition-all duration-350 ${
+            <div className={`flex items-start gap-3 p-4 rounded-none border-2 border-black shadow-[6px_6px_0_#000] backdrop-blur-md transition-all duration-350 ${
               alertConfig.type === 'success' 
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700' 
+                ? 'bg-emerald-500 text-black' 
                 : alertConfig.type === 'error' 
-                ? 'bg-red-500/10 border-red-500/20 text-red-700' 
-                : 'bg-amber-500/10 border-amber-500/20 text-amber-700'
+                ? 'bg-red-600 text-white' 
+                : 'bg-yellow-500 text-black'
             }`}>
-              <span className="text-lg">
+              <span className="text-lg font-bold">
                 {alertConfig.type === 'success' ? '✅' : alertConfig.type === 'error' ? '❌' : '⚠️'}
               </span>
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] font-black uppercase tracking-wider mb-0.5">
                   {alertConfig.type === 'success' ? 'Success' : alertConfig.type === 'error' ? 'Error' : 'Notification'}
                 </p>
-                <p className="text-xs font-semibold leading-relaxed break-words">{alertConfig.message}</p>
+                <p className="text-xs font-bold leading-relaxed break-words font-mono">{alertConfig.message}</p>
               </div>
               <button 
                 type="button"
                 onClick={() => setAlertConfig(null)}
-                className="text-xs font-bold hover:opacity-75 shrink-0 pl-1"
+                className="text-xs font-black hover:opacity-75 shrink-0 pl-1"
               >
                 ✕
               </button>
             </div>
           </div>
         )}
-        <Link to="/scorer" className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to Assigned Roster
+        <Link to="/scorer" className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors font-mono">
+          <ArrowLeft className="w-4 h-4 stroke-[3]" /> Back to Assigned Roster
         </Link>
 
-        <form onSubmit={startSetupSubmit} className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 space-y-6 shadow-sm">
-          <div className="border-b border-slate-100 pb-3">
-            <h1 className="text-xl font-black text-slate-800 uppercase tracking-tight">Match Scoring Setup</h1>
-            <p className="text-slate-400 text-xs mt-0.5">Configure Toss results and select opening partnerships to begin</p>
+        <form onSubmit={startSetupSubmit} className="neo-brutalist-card p-6 md:p-8 space-y-6">
+          <div className="border-b-2 border-black pb-3">
+            <h1 className="text-xl font-black text-white uppercase tracking-tight">Match Scoring Setup</h1>
+            <p className="text-slate-400 text-xs mt-0.5 font-mono">Configure Toss results and select opening partnerships to begin</p>
           </div>
 
           <div className="space-y-6">
             {/* Toss decision */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-3 font-mono">
                 Toss Decision (Team Batting First)
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <button
                   type="button"
                   onClick={() => setBattingFirstTeamId(match.team1_id)}
-                  className={`p-4 rounded-xl border text-xs font-bold uppercase tracking-wider flex flex-col items-center gap-2 transition-all ${
+                  className={`p-4 border-2 border-black text-xs font-black uppercase tracking-wider flex flex-col items-center gap-3 transition-all rounded-none ${
                     battingFirstTeamId === match.team1_id
-                      ? 'border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm'
-                      : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                      ? 'border-yellow-500 bg-yellow-500 text-black shadow-[4px_4px_0_#000]'
+                      : 'border-black bg-slate-900 hover:bg-slate-800 text-white shadow-[4px_4px_0_#000]'
                   }`}
                 >
                   <img
                     src={match.team1?.logo_url || 'https://placehold.co/100x100?text=T1'}
                     alt={match.team1?.name}
-                    className="w-10 h-10 rounded-full object-cover"
+                    className="w-12 h-12 rounded-none object-cover border-2 border-black shadow-[2px_2px_0_#000]"
                   />
                   <span>{match.team1?.name}</span>
                 </button>
@@ -733,16 +733,16 @@ export default function LiveScoring() {
                 <button
                   type="button"
                   onClick={() => setBattingFirstTeamId(match.team2_id)}
-                  className={`p-4 rounded-xl border text-xs font-bold uppercase tracking-wider flex flex-col items-center gap-2 transition-all ${
+                  className={`p-4 border-2 border-black text-xs font-black uppercase tracking-wider flex flex-col items-center gap-3 transition-all rounded-none ${
                     battingFirstTeamId === match.team2_id
-                      ? 'border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm'
-                      : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                      ? 'border-yellow-500 bg-yellow-500 text-black shadow-[4px_4px_0_#000]'
+                      : 'border-black bg-slate-900 hover:bg-slate-800 text-white shadow-[4px_4px_0_#000]'
                   }`}
                 >
                   <img
                     src={match.team2?.logo_url || 'https://placehold.co/100x100?text=T2'}
                     alt={match.team2?.name}
-                    className="w-10 h-10 rounded-full object-cover"
+                    className="w-12 h-12 rounded-none object-cover border-2 border-black shadow-[2px_2px_0_#000]"
                   />
                   <span>{match.team2?.name}</span>
                 </button>
@@ -751,15 +751,15 @@ export default function LiveScoring() {
 
             {/* Batsmen & Bowler selections */}
             {battingFirstTeamId && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-slate-100 pt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t-2 border-black pt-6">
                 {/* Striker */}
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
                     Opening Batter (Striker)
                   </label>
                   <select
                     required
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                    className="w-full neo-brutalist-select py-2.5 px-3 text-xs"
                     value={openingStrikerId}
                     onChange={(e) => setOpeningStrikerId(e.target.value)}
                   >
@@ -774,12 +774,12 @@ export default function LiveScoring() {
 
                 {/* Non striker */}
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
                     Opening Batter (Non-Striker)
                   </label>
                   <select
                     required
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                    className="w-full neo-brutalist-select py-2.5 px-3 text-xs"
                     value={openingNonStrikerId}
                     onChange={(e) => setOpeningNonStrikerId(e.target.value)}
                   >
@@ -794,12 +794,12 @@ export default function LiveScoring() {
 
                 {/* Bowler */}
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
                     Opening Bowler
                   </label>
                   <select
                     required
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                    className="w-full neo-brutalist-select py-2.5 px-3 text-xs"
                     value={openingBowlerId}
                     onChange={(e) => setOpeningBowlerId(e.target.value)}
                   >
@@ -815,13 +815,13 @@ export default function LiveScoring() {
             )}
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-slate-100">
+          <div className="flex justify-end pt-4 border-t-2 border-black">
             <button
               type="submit"
-              disabled={setupMatchMutation.isLoading || !battingFirstTeamId}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider py-3 px-6 rounded-xl shadow-lg shadow-emerald-600/10 flex items-center gap-1.5 transition-colors border border-emerald-600 disabled:opacity-50"
+              disabled={setupMatchMutation.isPending || !battingFirstTeamId}
+              className="bg-emerald-500 hover:bg-emerald-600 text-black font-black text-xs uppercase tracking-wider py-3 px-6 rounded-none flex items-center gap-1.5 transition-all neo-brutalist-btn shadow-[4px_4px_0_#000]"
             >
-              <Play className="w-4 h-4 fill-current" /> Start Live Scoring
+              <Play className="w-4 h-4 fill-current stroke-[3]" /> Start Live Scoring
             </button>
           </div>
         </form>
@@ -965,26 +965,26 @@ export default function LiveScoring() {
       {/* Premium Toast Notification Banner */}
       {alertConfig && (
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-md w-full px-4 animate-scaleUp">
-          <div className={`flex items-start gap-3 p-4 rounded-2xl border shadow-xl backdrop-blur-md transition-all duration-350 ${
+          <div className={`flex items-start gap-3 p-4 rounded-none border-2 border-black shadow-[6px_6px_0_#000] backdrop-blur-md transition-all duration-350 ${
             alertConfig.type === 'success' 
-              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700' 
+              ? 'bg-emerald-500 text-black' 
               : alertConfig.type === 'error' 
-              ? 'bg-red-500/10 border-red-500/20 text-red-700' 
-              : 'bg-amber-500/10 border-amber-500/20 text-amber-700'
+              ? 'bg-red-600 text-white' 
+              : 'bg-yellow-500 text-black'
           }`}>
-            <span className="text-lg">
+            <span className="text-lg font-bold">
               {alertConfig.type === 'success' ? '✅' : alertConfig.type === 'error' ? '❌' : '⚠️'}
             </span>
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-wider mb-0.5">
+              <p className="text-[10px] font-black uppercase tracking-wider mb-0.5 font-mono">
                 {alertConfig.type === 'success' ? 'Success' : alertConfig.type === 'error' ? 'Error' : 'Notification'}
               </p>
-              <p className="text-xs font-semibold leading-relaxed break-words">{alertConfig.message}</p>
+              <p className="text-xs font-bold leading-relaxed break-words font-mono">{alertConfig.message}</p>
             </div>
             <button 
               type="button"
               onClick={() => setAlertConfig(null)}
-              className="text-xs font-bold hover:opacity-75 shrink-0 pl-1"
+              className="text-xs font-black hover:opacity-75 shrink-0 pl-1"
             >
               ✕
             </button>
@@ -993,68 +993,68 @@ export default function LiveScoring() {
       )}
       {/* 2A. REALTIME SCOREBOARD CARD */}
       {currentInnings && (
-        <section className="bg-white border-2 border-slate-200 rounded-2xl p-6 shadow-sm space-y-4 relative overflow-hidden">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3 flex-wrap gap-2">
+        <section className="neo-brutalist-lcd p-6 space-y-4 relative overflow-hidden">
+          <div className="flex items-center justify-between border-b-2 border-black pb-3 flex-wrap gap-2">
             <div>
-              <span className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-widest block leading-none">
+              <span className="text-[10px] text-black font-black uppercase tracking-widest block leading-none font-mono">
                 Innings {match.current_innings} Scoring Ticker
               </span>
-              <h2 className="text-xs font-bold text-slate-500 uppercase mt-1">
+              <h2 className="text-xs font-black text-black uppercase mt-1 font-mono">
                 Batting: {currentInnings.batting_team_id === match.team1_id ? match.team1?.name : match.team2?.name}
               </h2>
             </div>
             <div className="text-right">
-              <span className="inline-flex items-center gap-1 bg-red-50 px-2 py-0.5 rounded border border-red-100 text-red-600 text-[9px] font-black uppercase tracking-wider animate-pulse">
-                <span className="w-1.5 h-1.5 bg-red-600 rounded-full"></span> Live
+              <span className="inline-flex items-center gap-1.5 bg-red-600 border-2 border-black text-white text-[9px] font-black uppercase tracking-wider animate-pulse shadow-[2px_2px_0_#000] px-2 py-0.5">
+                <span className="w-1.5 h-1.5 bg-white rounded-none"></span> Live
               </span>
             </div>
           </div>
 
           <div className="flex justify-between items-center flex-wrap gap-4 py-2">
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-black text-slate-800 tracking-tight">
+              <span className="text-5xl font-black text-black tracking-tight font-mono">
                 {currentInnings.runs}/{currentInnings.wickets}
               </span>
-              <span className="text-slate-400 font-extrabold text-sm uppercase tracking-wide">
+              <span className="text-black/80 font-black text-sm uppercase tracking-wide font-mono">
                 ({getOversString(currentBalls)} / {match.overs_limit} ov)
               </span>
             </div>
 
             <div className="flex gap-4 text-center">
               <div>
-                <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">Run Rate (CRR)</span>
-                <span className="text-base font-black text-slate-700 mt-0.5 block">{currentCRR}</span>
+                <span className="block text-[9px] text-black/80 font-black uppercase tracking-wider font-mono">Run Rate (CRR)</span>
+                <span className="text-lg font-black text-black mt-0.5 block font-mono">{currentCRR}</span>
               </div>
             </div>
           </div>
 
           {/* Active Batsmen and Bowler rows */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-100 pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t-2 border-black pt-4">
             <div className="space-y-2">
-              <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">Batsmen Partnership</span>
-              <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3 space-y-2 text-xs">
-                <div className="flex items-center justify-between font-bold text-slate-700">
+              <span className="block text-[9px] text-black/95 font-black uppercase tracking-wider font-mono">Batsmen Partnership</span>
+              <div className="bg-[#080c14] border-2 border-black p-3 space-y-2 text-xs text-white shadow-[3px_3px_0_#000] rounded-none">
+                <div className="flex items-center justify-between font-black text-white">
                   <span className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="w-1.5 h-1.5 rounded-none bg-emerald-500 animate-pulse"></span>
                     <strong>{activeStriker?.name || 'Striker'} *</strong>
                   </span>
-                  <span>Striking</span>
+                  <span className="text-yellow-400 font-mono text-[10px]">Striking</span>
                 </div>
-                <div className="flex items-center justify-between text-slate-500 font-medium">
+                <div className="flex items-center justify-between text-slate-400 font-bold">
                   <span>{activeNonStriker?.name || 'Non Striker'}</span>
-                  <span>Off strike</span>
+                  <span className="text-slate-500 font-mono text-[10px]">Off strike</span>
                 </div>
               </div>
             </div>
 
             <div className="space-y-2">
-              <span className="block text-[9px] text-slate-400 font-bold uppercase tracking-wider">Bowler Assigned</span>
-              <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3 flex justify-between items-center text-xs">
-                <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
+              <span className="block text-[9px] text-black/95 font-black uppercase tracking-wider font-mono">Bowler Assigned</span>
+              <div className="bg-[#080c14] border-2 border-black p-3 flex justify-between items-center text-xs text-white shadow-[3px_3px_0_#000] rounded-none">
+                <span className="font-black text-white flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-none bg-purple-500"></span>
                   {activeBowlerData?.name || 'Bowler'}
                 </span>
-                <span className="font-bold text-slate-500">Current Over</span>
+                <span className="font-black text-yellow-400 font-mono text-[10px]">Current Over</span>
               </div>
             </div>
           </div>
@@ -1062,19 +1062,19 @@ export default function LiveScoring() {
       )}
 
       {/* 2B. FAT-FINGER BUTTON GRID PANEL */}
-      <section className="bg-white border-2 border-slate-200 rounded-2xl p-6 shadow-sm space-y-6">
-        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">
+      <section className="neo-brutalist-card p-6 shadow-[8px_8px_0_#000] space-y-6">
+        <h3 className="text-xs font-black text-yellow-400 uppercase tracking-widest border-b-2 border-black pb-2 font-mono">
           Scoring Control Board
         </h3>
 
         {/* Extras toggle selectors */}
         {!boardReady && (
-          <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-xs text-red-700 font-semibold flex items-start gap-2">
+          <div className="bg-red-600 border-2 border-black px-4 py-3 text-xs text-white font-black flex items-start gap-2 shadow-[4px_4px_0_#000]">
             <span className="text-lg leading-none">⚠️</span>
             <div>
-              <p className="font-black">Scoring board not ready — database columns missing!</p>
-              <p className="mt-0.5 font-medium opacity-80">Run this SQL in your Supabase SQL Editor and refresh:</p>
-              <pre className="mt-1.5 bg-red-100 rounded p-2 text-[10px] font-mono whitespace-pre-wrap select-all">{`alter table public.innings add column if not exists striker_id uuid references public.players(id) on delete set null;
+              <p className="font-black uppercase tracking-wider">Scoring board not ready — database columns missing!</p>
+              <p className="mt-0.5 font-mono text-[11px] opacity-90">Run this SQL in your Supabase SQL Editor and refresh:</p>
+              <pre className="mt-1.5 bg-slate-900 border border-black p-2 text-[10px] font-mono whitespace-pre-wrap select-all text-yellow-400">{`alter table public.innings add column if not exists striker_id uuid references public.players(id) on delete set null;
 alter table public.innings add column if not exists non_striker_id uuid references public.players(id) on delete set null;
 alter table public.innings add column if not exists bowler_id uuid references public.players(id) on delete set null;`}</pre>
             </div>
@@ -1088,10 +1088,10 @@ alter table public.innings add column if not exists bowler_id uuid references pu
                 key={type}
                 type="button"
                 onClick={() => setExtraType(extraType === type ? 'none' : type)}
-                className={`py-3 border-2 text-center rounded-xl font-extrabold text-[10px] tracking-wider uppercase transition-all shadow-sm ${
+                className={`py-3 border-2 text-center rounded-none font-black text-[10px] tracking-wider uppercase transition-all shadow-[3px_3px_0_#000] ${
                   extraType === type
-                    ? 'border-amber-500 bg-amber-50 text-amber-700 font-black'
-                    : 'border-slate-200 hover:bg-slate-50 text-slate-600'
+                    ? 'border-black bg-yellow-500 text-black'
+                    : 'border-black bg-slate-900 hover:bg-slate-800 text-slate-350'
                 }`}
               >
                 {label}
@@ -1106,16 +1106,16 @@ alter table public.innings add column if not exists bowler_id uuid references pu
             <button
               key={run}
               type="button"
-              disabled={!boardReady || recordBallMutation.isLoading}
+              disabled={!boardReady || recordBallMutation.isPending}
               onClick={() => handleScoreRuns(run)}
-              className={`py-6 text-xl font-black rounded-2xl border-2 text-center shadow-md transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed ${
+              className={`py-5 text-xl font-black border-2 text-center transition-all neo-brutalist-btn ${
                 run === 4
-                  ? 'border-blue-600 bg-blue-50 text-blue-700'
+                  ? 'bg-yellow-500 hover:bg-yellow-600 text-black shadow-[4px_4px_0_#000]'
                   : run === 6
-                  ? 'border-purple-600 bg-purple-50 text-purple-700'
+                  ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-[4px_4px_0_#000]'
                   : run === 0
-                  ? 'border-slate-300 bg-slate-100 text-slate-500'
-                  : 'border-emerald-600 bg-emerald-50 text-emerald-700'
+                  ? 'bg-slate-800 hover:bg-slate-950 text-white shadow-[4px_4px_0_#000]'
+                  : 'bg-emerald-500 hover:bg-emerald-600 text-black shadow-[4px_4px_0_#000]'
               }`}
             >
               {run} Runs
@@ -1129,7 +1129,7 @@ alter table public.innings add column if not exists bowler_id uuid references pu
           <button
             type="button"
             onClick={handleSwapStrike}
-            className="py-4 border-2 border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl font-extrabold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-1.5 transition-colors"
+            className="py-4 border-2 border-black bg-white hover:bg-slate-100 text-black font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all neo-brutalist-btn shadow-[4px_4px_0_#000]"
           >
             🔄 Rotate Strike
           </button>
@@ -1143,20 +1143,20 @@ alter table public.innings add column if not exists bowler_id uuid references pu
                 undoLastBallMutation.mutate()
               }
             }}
-            className="py-4 border-2 border-slate-200 hover:bg-slate-50 text-slate-500 rounded-xl font-extrabold text-xs uppercase tracking-wider shadow-sm flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+            className="py-4 border-2 border-black bg-slate-900 hover:bg-slate-800 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all neo-brutalist-btn shadow-[4px_4px_0_#000]"
           >
-            <RotateCcw className="w-4 h-4" /> Undo Ball
+            <RotateCcw className="w-4 h-4 stroke-[3]" /> Undo Ball
           </button>
 
           {/* Wicket */}
           <button
             type="button"
-            disabled={!boardReady || recordBallMutation.isLoading}
+            disabled={!boardReady || recordBallMutation.isPending}
             onClick={() => {
               setOutBatsmanId(currentInnings.striker_id) // default to striker out
               setShowWicketModal(true)
             }}
-            className="py-4 border-2 border-red-600 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-md shadow-red-600/10 flex items-center justify-center gap-1.5 transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="py-4 border-2 border-black bg-red-600 hover:bg-red-700 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all neo-brutalist-btn shadow-[4px_4px_0_#ef4444]"
           >
             ⚠️ WICKET
           </button>
@@ -1165,22 +1165,22 @@ alter table public.innings add column if not exists bowler_id uuid references pu
 
       {/* 2C. DISMISSAL POPUP MODAL */}
       {showWicketModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <form onSubmit={handleWicketSubmit} className="bg-white border border-slate-200 p-6 rounded-2xl w-full max-w-md space-y-4 shadow-2xl animate-scaleUp">
-            <div className="border-b border-slate-100 pb-2">
-              <h3 className="font-black text-slate-800 uppercase tracking-tight text-base">Record Wicket Dismissal</h3>
-              <p className="text-slate-400 text-xs mt-0.5">Specify how the batsman got out</p>
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+          <form onSubmit={handleWicketSubmit} className="bg-[#111827] border-4 border-black p-6 rounded-none w-full max-w-md space-y-4 shadow-[8px_8px_0_#ef4444] animate-scaleUp">
+            <div className="border-b-2 border-black pb-2">
+              <h3 className="font-black text-white uppercase tracking-tight text-base">Record Wicket Dismissal</h3>
+              <p className="text-slate-400 text-xs mt-0.5 font-mono">Specify how the batsman got out</p>
             </div>
 
             <div className="space-y-4">
               {/* Dismissal type */}
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
                   Wicket Type
                 </label>
                 <select
                   required
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                  className="w-full neo-brutalist-select py-2.5 px-3 text-xs"
                   value={wicketType}
                   onChange={(e) => setWicketType(e.target.value)}
                 >
@@ -1196,17 +1196,17 @@ alter table public.innings add column if not exists bowler_id uuid references pu
 
               {/* Who is out */}
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
                   Dismissed Batsman
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setOutBatsmanId(currentInnings.striker_id)}
-                    className={`py-2 px-3 border rounded-xl text-xs font-bold transition-all ${
+                    className={`py-2.5 px-3 border-2 border-black text-xs font-black transition-all rounded-none ${
                       outBatsmanId === currentInnings.striker_id
-                        ? 'border-red-500 bg-red-50 text-red-700'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                        ? 'bg-red-600 text-white shadow-[3px_3px_0_#000]'
+                        : 'bg-slate-900 text-slate-350 hover:bg-slate-800 shadow-[3px_3px_0_#000]'
                     }`}
                   >
                     {activeStriker?.name} (Striker)
@@ -1215,10 +1215,10 @@ alter table public.innings add column if not exists bowler_id uuid references pu
                   <button
                     type="button"
                     onClick={() => setOutBatsmanId(currentInnings.non_striker_id)}
-                    className={`py-2 px-3 border rounded-xl text-xs font-bold transition-all ${
+                    className={`py-2.5 px-3 border-2 border-black text-xs font-black transition-all rounded-none ${
                       outBatsmanId === currentInnings.non_striker_id
-                        ? 'border-red-500 bg-red-50 text-red-700'
-                        : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                        ? 'bg-red-600 text-white shadow-[3px_3px_0_#000]'
+                        : 'bg-slate-900 text-slate-350 hover:bg-slate-800 shadow-[3px_3px_0_#000]'
                     }`}
                   >
                     {activeNonStriker?.name} (Non-Striker)
@@ -1229,11 +1229,11 @@ alter table public.innings add column if not exists bowler_id uuid references pu
               {/* Fielder select (for catch/runout/stumping) */}
               {['caught', 'stumped', 'run_out'].includes(wicketType) && (
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
                     Fielder Involved
                   </label>
                   <select
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                    className="w-full neo-brutalist-select py-2.5 px-3 text-xs"
                     value={fielderId}
                     onChange={(e) => setFielderId(e.target.value)}
                   >
@@ -1252,13 +1252,13 @@ alter table public.innings add column if not exists bowler_id uuid references pu
               <button
                 type="button"
                 onClick={() => setShowWicketModal(false)}
-                className="bg-slate-100 hover:bg-slate-200 text-slate-500 text-xs font-bold uppercase py-2 px-4 rounded-xl"
+                className="bg-white hover:bg-slate-100 text-black text-xs font-black uppercase py-2.5 px-4 rounded-none neo-brutalist-btn shadow-[2px_2px_0_#000]"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="bg-red-600 hover:bg-red-700 text-white text-xs font-bold uppercase py-2 px-5 rounded-xl shadow"
+                className="bg-red-600 hover:bg-red-700 text-white text-xs font-black uppercase py-2.5 px-5 rounded-none neo-brutalist-btn shadow-[2px_2px_0_#000]"
               >
                 Confirm Dismissal
               </button>
@@ -1269,13 +1269,13 @@ alter table public.innings add column if not exists bowler_id uuid references pu
 
       {/* 2D. NEW BATSMAN ASSIGNMENT POPUP */}
       {showBatsmanSelect && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 p-6 rounded-2xl w-full max-w-sm space-y-4 shadow-2xl">
-            <h3 className="font-black text-slate-800 uppercase tracking-tight text-base">Select New Batsman</h3>
-            <p className="text-slate-400 text-xs">Choose the batsman entering the crease next</p>
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#111827] border-4 border-black p-6 rounded-none w-full max-w-sm space-y-4 shadow-[8px_8px_0_#eab308] animate-scaleUp">
+            <h3 className="font-black text-white uppercase tracking-tight text-base">Select New Batsman</h3>
+            <p className="text-slate-400 text-xs font-mono">Choose the batsman entering the crease next</p>
 
             <select
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+              className="w-full neo-brutalist-select py-2.5 px-3 text-xs"
               value={selectedNewBatsmanId}
               onChange={(e) => setSelectedNewBatsmanId(e.target.value)}
             >
@@ -1304,7 +1304,7 @@ alter table public.innings add column if not exists bowler_id uuid references pu
                 let strikerKey = 'striker_id'
                 if (currentInnings.striker_id === outBatsmanId) strikerKey = 'striker_id'
                 else strikerKey = 'striker_id' // Default update striker
-
+ 
                 await updateInningsMutation.mutateAsync({
                   inningsId: currentInnings.id,
                   data: {
@@ -1316,7 +1316,7 @@ alter table public.innings add column if not exists bowler_id uuid references pu
                 setSelectedNewBatsmanId('')
               }}
               disabled={!selectedNewBatsmanId}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase py-3 rounded-xl disabled:opacity-50"
+              className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-black text-xs uppercase py-3 rounded-none neo-brutalist-btn shadow-[3px_3px_0_#000]"
             >
               Confirm Replacement
             </button>
@@ -1326,16 +1326,16 @@ alter table public.innings add column if not exists bowler_id uuid references pu
 
       {/* 2E. NEW BOWLER ASSIGNMENT POPUP */}
       {showBowlerSelect && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 p-6 rounded-2xl w-full max-w-sm space-y-4 shadow-2xl">
-            <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
-              <AlertCircle className="w-5 h-5 text-amber-500 shrink-0" />
-              <h3 className="font-black text-slate-800 uppercase tracking-tight text-sm">Select New Bowler</h3>
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#111827] border-4 border-black p-6 rounded-none w-full max-w-sm space-y-4 shadow-[8px_8px_0_#8b5cf6] animate-scaleUp">
+            <div className="flex items-center gap-2 border-b-2 border-black pb-2">
+              <AlertCircle className="w-5 h-5 text-yellow-400 shrink-0 stroke-[3]" />
+              <h3 className="font-black text-white uppercase tracking-tight text-sm">Select New Bowler</h3>
             </div>
-            <p className="text-slate-400 text-xs">Over complete. Assign the bowler for the next over.</p>
+            <p className="text-slate-400 text-xs font-mono">Over complete. Assign the bowler for the next over.</p>
 
             <select
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+              className="w-full neo-brutalist-select py-2.5 px-3 text-xs"
               value={selectedNewBowlerId}
               onChange={(e) => setSelectedNewBowlerId(e.target.value)}
             >
@@ -1364,7 +1364,7 @@ alter table public.innings add column if not exists bowler_id uuid references pu
                 setSelectedNewBowlerId('')
               }}
               disabled={!selectedNewBowlerId}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase py-3 rounded-xl disabled:opacity-50"
+              className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-black text-xs uppercase py-3 rounded-none neo-brutalist-btn shadow-[3px_3px_0_#000]"
             >
               Confirm Bowler
             </button>
@@ -1374,22 +1374,22 @@ alter table public.innings add column if not exists bowler_id uuid references pu
 
       {/* 2F. CONCLUDE MATCH & MAN OF MATCH SELECT MODAL */}
       {showManOfMatchSelect && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <form onSubmit={handleConcludeMatchSubmit} className="bg-white border border-slate-200 p-6 rounded-2xl w-full max-w-sm space-y-4 shadow-2xl">
-            <div className="border-b border-slate-100 pb-2">
-              <h3 className="font-black text-slate-800 uppercase tracking-tight text-base flex items-center gap-1.5">
-                <Award className="w-5 h-5 text-amber-500" /> Match Concluded
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+          <form onSubmit={handleConcludeMatchSubmit} className="bg-[#111827] border-4 border-black p-6 rounded-none w-full max-w-sm space-y-4 shadow-[8px_8px_0_#eab308] animate-scaleUp">
+            <div className="border-b-2 border-black pb-2">
+              <h3 className="font-black text-white uppercase tracking-tight text-base flex items-center gap-1.5">
+                <Award className="w-5 h-5 text-yellow-400 stroke-[3]" /> Match Concluded
               </h3>
-              <p className="text-slate-400 text-xs mt-0.5">Configure presenting awards and final standings</p>
+              <p className="text-slate-400 text-xs mt-0.5 font-mono">Configure presenting awards and final standings</p>
             </div>
 
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
                 Select Man of the Match
               </label>
               <select
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full neo-brutalist-select py-2.5 px-3 text-xs"
                 value={selectedManOfMatchId}
                 onChange={(e) => setSelectedManOfMatchId(e.target.value)}
               >
@@ -1406,7 +1406,7 @@ alter table public.innings add column if not exists bowler_id uuid references pu
             <button
               type="submit"
               disabled={finishMatchMutation.isPending}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs uppercase py-3 rounded-xl shadow disabled:opacity-50"
+              className="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-black text-xs uppercase py-3 rounded-none neo-brutalist-btn shadow-[4px_4px_0_#000]"
             >
               {finishMatchMutation.isPending ? 'Saving Match...' : 'Submit & Close Fixture'}
             </button>

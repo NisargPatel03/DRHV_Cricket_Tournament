@@ -29,9 +29,13 @@ export default function ViewerLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pb-16 md:pb-0">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-[#0a0f1d] to-[#040814] text-slate-100 flex flex-col pb-16 md:pb-0 relative overflow-hidden">
+      {/* Dynamic Ambient Background Glows */}
+      <div className="fixed w-[600px] h-[600px] rounded-full ambient-glow-1 top-[-200px] left-[-200px] filter blur-[60px] opacity-80 pointer-events-none z-0 animate-float-slow"></div>
+      <div className="fixed w-[700px] h-[700px] rounded-full ambient-glow-2 bottom-[-200px] right-[-200px] filter blur-[80px] opacity-60 pointer-events-none z-0 animate-float-reverse"></div>
+
       {/* Top Navbar for Desktop */}
-      <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 md:px-8">
+      <header className="sticky top-0 z-40 bg-slate-950/40 backdrop-blur-xl border-b border-white/5 px-4 py-3 md:px-8 shadow-lg shadow-black/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
             <img
@@ -213,7 +217,7 @@ export default function ViewerLayout() {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:px-8">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6 md:px-8 relative z-10">
         <Outlet />
       </main>
 

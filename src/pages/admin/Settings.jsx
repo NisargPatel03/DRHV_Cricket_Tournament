@@ -87,10 +87,10 @@ export default function SettingsPage() {
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-md w-full px-4 animate-scaleUp">
           <div className={`flex items-start gap-3 p-4 rounded-2xl border shadow-xl backdrop-blur-md transition-all duration-350 ${
             alertConfig.type === 'success' 
-              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700' 
+              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-450' 
               : alertConfig.type === 'error' 
-              ? 'bg-red-500/10 border-red-500/20 text-red-700' 
-              : 'bg-amber-500/10 border-amber-500/20 text-amber-700'
+              ? 'bg-red-500/10 border-red-500/20 text-red-400' 
+              : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
           }`}>
             <span className="text-lg">
               {alertConfig.type === 'success' ? '✅' : alertConfig.type === 'error' ? '❌' : '⚠️'}
@@ -113,16 +113,16 @@ export default function SettingsPage() {
       )}
       {/* Title Header */}
       <div>
-        <h1 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Tournament Settings</h1>
-        <p className="text-slate-500 text-xs">Configure central brand branding and season scheduler limits</p>
+        <h1 className="text-2xl font-black text-white tracking-tight uppercase">Tournament Settings</h1>
+        <p className="text-slate-400 text-xs font-semibold">Configure central brand branding and season scheduler limits</p>
       </div>
 
       {isLoading ? (
         <Spinner message="Loading system settings..." />
       ) : (
-        <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 space-y-6 shadow-sm max-w-2xl">
-          <h2 className="text-xs font-bold text-slate-700 uppercase tracking-widest border-b border-slate-100 pb-2 flex items-center gap-1.5">
-            <Trophy className="w-4 h-4 text-emerald-500" /> Tournament Identity
+        <form onSubmit={handleSubmit} className="telemetry-card p-6 md:p-8 space-y-6 max-w-2xl">
+          <h2 className="text-xs font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2 flex items-center gap-1.5">
+            <Trophy className="w-4 h-4 text-emerald-450" /> Tournament Identity
           </h2>
 
           <div className="space-y-4">
@@ -134,7 +134,7 @@ export default function SettingsPage() {
               <input
                 type="text"
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                 value={tournamentName}
                 onChange={(e) => setTournamentName(e.target.value)}
               />
@@ -148,7 +148,7 @@ export default function SettingsPage() {
                 </label>
                 <input
                   type="date"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                 />
@@ -160,7 +160,7 @@ export default function SettingsPage() {
                 </label>
                 <input
                   type="date"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
                 />
@@ -175,7 +175,7 @@ export default function SettingsPage() {
               <input
                 type="url"
                 placeholder="https://..."
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                 value={logoUrl}
                 onChange={(e) => setLogoUrl(e.target.value)}
               />
@@ -183,9 +183,9 @@ export default function SettingsPage() {
           </div>
 
           {/* Action Row */}
-          <div className="flex items-center justify-between pt-4 border-t border-slate-100 flex-wrap gap-4">
+          <div className="flex items-center justify-between pt-4 border-t border-white/10 flex-wrap gap-4">
             <span className="text-[10px] text-slate-400 font-bold uppercase flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Branding applies tournament-wide
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Branding applies tournament-wide
             </span>
             
             <button

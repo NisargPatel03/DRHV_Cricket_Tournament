@@ -153,10 +153,10 @@ export default function GalleryManager() {
         <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-md w-full px-4 animate-scaleUp">
           <div className={`flex items-start gap-3 p-4 rounded-2xl border shadow-xl backdrop-blur-md transition-all duration-350 ${
             alertConfig.type === 'success' 
-              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700' 
+              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
               : alertConfig.type === 'error' 
-              ? 'bg-red-500/10 border-red-500/20 text-red-700' 
-              : 'bg-amber-500/10 border-amber-500/20 text-amber-700'
+              ? 'bg-red-500/10 border-red-500/20 text-red-400' 
+              : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
           }`}>
             <span className="text-lg">
               {alertConfig.type === 'success' ? '✅' : alertConfig.type === 'error' ? '❌' : '⚠️'}
@@ -180,8 +180,8 @@ export default function GalleryManager() {
       {/* Header Controls */}
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Tournament Gallery Manager</h1>
-          <p className="text-slate-500 text-xs">Publish match snapshots, tag them to scheduled fixtures, and edit captions</p>
+          <h1 className="text-2xl font-black text-white tracking-tight uppercase">Tournament Gallery Manager</h1>
+          <p className="text-slate-400 text-xs font-semibold">Publish match snapshots, tag them to scheduled fixtures, and edit captions</p>
         </div>
 
         <button
@@ -194,8 +194,8 @@ export default function GalleryManager() {
 
       {/* Add Photo Panel */}
       {showAddForm && (
-        <form onSubmit={handleSubmit} className="bg-white border border-slate-200 p-6 rounded-2xl space-y-4 shadow-md">
-          <h2 className="text-xs font-bold text-slate-700 uppercase tracking-widest border-b border-slate-100 pb-2">
+        <form onSubmit={handleSubmit} className="telemetry-card p-6 space-y-4">
+          <h2 className="text-xs font-bold text-white uppercase tracking-widest border-b border-white/10 pb-2">
             Upload Snapshot
           </h2>
 
@@ -206,7 +206,7 @@ export default function GalleryManager() {
                 Option A: Upload File (Supabase Storage)
               </label>
               
-              <div className="border-2 border-dashed border-slate-200 hover:border-emerald-500/30 rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-50 relative">
+              <div className="border-2 border-dashed border-white/10 hover:border-emerald-500/30 rounded-xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-950/40 relative">
                 <input
                   type="file"
                   accept="image/*"
@@ -215,7 +215,7 @@ export default function GalleryManager() {
                   disabled={uploading}
                 />
                 <Upload className="w-8 h-8 text-slate-400 mb-2" />
-                <span className="text-xs font-semibold text-slate-500">
+                <span className="text-xs font-semibold text-slate-300">
                   {uploading ? 'Uploading image...' : 'Click to browse files'}
                 </span>
                 <span className="text-[10px] text-slate-400 mt-1">PNG, JPG or WebP up to 5MB</span>
@@ -233,7 +233,7 @@ export default function GalleryManager() {
                   <input
                     type="url"
                     placeholder="https://images.unsplash.com/..."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                     value={imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
                   />
@@ -245,7 +245,7 @@ export default function GalleryManager() {
                   Tag Specific Match (Optional)
                 </label>
                 <select
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
                   value={matchId}
                   onChange={(e) => setMatchId(e.target.value)}
                 >
@@ -267,7 +267,7 @@ export default function GalleryManager() {
             <input
               type="text"
               placeholder="e.g. Captain lifting the winner cup during presentation ceremony"
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-emerald-500"
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
             />
@@ -277,7 +277,7 @@ export default function GalleryManager() {
             <button
               type="button"
               onClick={() => setShowAddForm(false)}
-              className="bg-slate-100 hover:bg-slate-200 text-slate-500 text-xs font-bold uppercase py-2 px-4 rounded-xl"
+              className="bg-slate-900 hover:bg-slate-850 text-slate-400 border border-white/10 text-xs font-bold uppercase py-2 px-4 rounded-xl"
             >
               Cancel
             </button>
@@ -300,10 +300,10 @@ export default function GalleryManager() {
           {photos.map((photo) => (
             <div
               key={photo.id}
-              className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm relative group flex flex-col justify-between"
+              className="telemetry-card overflow-hidden relative group flex flex-col justify-between"
             >
               {/* Image box */}
-              <div className="relative aspect-video shrink-0 overflow-hidden bg-slate-50 border-b border-slate-100">
+              <div className="relative aspect-video shrink-0 overflow-hidden bg-slate-950/40 border-b border-white/10">
                 <img
                   src={photo.image_url}
                   alt={photo.caption}
@@ -333,11 +333,11 @@ export default function GalleryManager() {
 
               {/* Text footer summary */}
               <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
-                <p className="text-slate-600 text-xs font-medium leading-snug line-clamp-2">
+                <p className="text-slate-350 text-xs font-medium leading-snug line-clamp-2">
                   {photo.caption || 'Tournament snapshot'}
                 </p>
                 
-                <div className="pt-2 border-t border-slate-50 flex justify-between items-center text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+                <div className="pt-2 border-t border-white/10 flex justify-between items-center text-[9px] font-bold text-slate-400 uppercase tracking-wider">
                   <span>
                     {photo.match ? `${photo.match.team1?.short_name} vs ${photo.match.team2?.short_name}` : 'General'}
                   </span>
@@ -348,8 +348,8 @@ export default function GalleryManager() {
           ))}
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-2xl p-16 text-center text-slate-400 shadow-sm">
-          <Image className="w-10 h-10 mx-auto text-slate-300 mb-2" />
+        <div className="telemetry-card p-16 text-center text-slate-400">
+          <Image className="w-10 h-10 mx-auto text-slate-550 mb-2" />
           <p className="text-sm font-semibold">No tournament photos registered.</p>
           <p className="text-xs text-slate-500 mt-1">
             Click "Add Gallery Snapshot" above to upload the first photo.
@@ -360,13 +360,13 @@ export default function GalleryManager() {
       {/* Lightbox Overlay */}
       {lightboxImg && (
         <div
-          className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4 cursor-zoom-out"
+          className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out"
           onClick={() => setLightboxImg(null)}
         >
           <img
             src={lightboxImg}
             alt="Gallery Lightbox"
-            className="max-w-full max-h-[85vh] rounded-3xl border border-slate-800 shadow-2xl object-contain animate-fadeIn"
+            className="max-w-full max-h-[85vh] rounded-3xl border border-white/15 shadow-2xl object-contain animate-fadeIn"
           />
         </div>
       )}

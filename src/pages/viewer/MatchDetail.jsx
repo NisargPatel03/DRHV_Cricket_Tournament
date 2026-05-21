@@ -453,55 +453,55 @@ export default function MatchDetail() {
         <ArrowLeft className="w-4 h-4" /> Back to Match Schedules
       </Link>
 
-      {/* 1. TOP DYNAMIC SCORE HEADER HEADER */}
-      <section className="bg-slate-900 border border-slate-800 shadow-2xl rounded-3xl overflow-hidden">
+      {/* 1. TOP DYNAMIC SCORE HEADER */}
+      <section className="bento-card overflow-hidden border border-white/5!">
         {/* Pulsing state bar */}
-        <div className="bg-emerald-600 px-6 py-2 flex items-center justify-between text-white font-extrabold text-[10px] tracking-widest uppercase">
+        <div className="bg-emerald-600 px-6 py-2 flex items-center justify-between text-white font-black text-[10px] tracking-widest uppercase shadow">
           <span>{match.stage} • {match.venue}</span>
           {match.status === 'live' ? (
-            <span className="flex items-center gap-1.5 animate-pulse bg-red-600 px-2 py-0.5 rounded border border-red-500">
-              <span className="w-1.5 h-1.5 bg-white rounded-full"></span> Live Live Ticker
+            <span className="flex items-center gap-1.5 animate-pulse bg-red-650 px-2.5 py-0.5 rounded border border-red-500 text-[9px] font-black tracking-widest shadow">
+              <span className="w-1.5 h-1.5 bg-white rounded-full"></span> Live Ticker
             </span>
           ) : match.status === 'completed' ? (
-            <span className="bg-emerald-900 px-2 py-0.5 rounded">Match Completed</span>
+            <span className="bg-emerald-900 px-2.5 py-0.5 rounded text-[9px] font-black tracking-widest">Match Completed</span>
           ) : (
-            <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded">Upcoming Scheduled</span>
+            <span className="bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded text-[9px] font-black tracking-widest">Upcoming Scheduled</span>
           )}
         </div>
 
         {/* Center Teams Score Row */}
-        <div className="p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-12 bg-gradient-to-b from-slate-900 to-slate-950">
+        <div className="p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-12 bg-gradient-to-b from-slate-900/10 to-slate-950/20">
           {/* Team 1 Bio */}
           <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left flex-1">
             <img
               src={match.team1?.logo_url || 'https://placehold.co/120x120/1e293b/ffffff?text=' + encodeURIComponent(match.team1?.short_name || 'T1')}
               alt={match.team1?.name}
-              className="w-16 h-16 rounded-full object-cover border border-slate-800 bg-slate-950 shadow-lg"
+              className="w-16 h-16 rounded-full object-cover border border-white/10 bg-slate-950 shadow-lg"
             />
             <div>
               <h2 className="font-extrabold text-lg text-white leading-tight">{match.team1?.name}</h2>
-              <span className="text-[10px] text-slate-500 font-extrabold uppercase mt-0.5 tracking-wider block">
+              <span className="text-[10px] text-slate-500 font-black uppercase mt-0.5 tracking-widest block">
                 {match.team1?.short_name}
               </span>
               {innings1 ? (
-                <div className="mt-1.5">
+                <div className="mt-2 flex items-baseline gap-1.5">
                   <span className="text-xl md:text-2xl font-black text-white">{innings1.runs}/{innings1.wickets}</span>
-                  <span className="text-xs text-slate-400 font-semibold ml-1.5">
+                  <span className="text-xs text-slate-400 font-bold tracking-wider">
                     ({getOversString(inn1Balls)} ov)
                   </span>
                 </div>
               ) : (
-                <span className="text-xs text-slate-500 italic block mt-1">Yet to bat</span>
+                <span className="text-xs text-slate-500 italic block mt-2">Yet to bat</span>
               )}
             </div>
           </div>
 
           {/* VS Ticker */}
           <div className="flex flex-col items-center shrink-0">
-            <span className="w-8 h-8 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center font-extrabold text-slate-500 text-xs shadow-inner">
+            <span className="w-8 h-8 rounded-full bg-slate-950 border border-white/5 flex items-center justify-center font-black text-slate-400 text-xs shadow-inner">
               VS
             </span>
-            <p className="text-[10px] text-slate-500 font-bold uppercase mt-2 tracking-widest">{match.overs_limit} Overs Match</p>
+            <p className="text-[9px] text-slate-500 font-extrabold uppercase mt-2.5 tracking-widest">{match.overs_limit} Overs Match</p>
           </div>
 
           {/* Team 2 Bio */}
@@ -509,26 +509,26 @@ export default function MatchDetail() {
             <img
               src={match.team2?.logo_url || 'https://placehold.co/120x120/1e293b/ffffff?text=' + encodeURIComponent(match.team2?.short_name || 'T2')}
               alt={match.team2?.name}
-              className="w-16 h-16 rounded-full object-cover border border-slate-800 bg-slate-950 shadow-lg"
+              className="w-16 h-16 rounded-full object-cover border border-white/10 bg-slate-950 shadow-lg"
             />
             <div>
               <h2 className="font-extrabold text-lg text-white leading-tight">{match.team2?.name}</h2>
-              <span className="text-[10px] text-slate-500 font-extrabold uppercase mt-0.5 tracking-wider block">
+              <span className="text-[10px] text-slate-500 font-black uppercase mt-0.5 tracking-widest block">
                 {match.team2?.short_name}
               </span>
               {innings2 ? (
-                <div className="mt-1.5">
+                <div className="mt-2 flex items-baseline gap-1.5 justify-end">
                   <span className="text-xl md:text-2xl font-black text-white">{innings2.runs}/{innings2.wickets}</span>
-                  <span className="text-xs text-slate-400 font-semibold mr-1.5">
+                  <span className="text-xs text-slate-400 font-bold tracking-wider">
                     ({getOversString(inn2Balls)} ov)
                   </span>
                 </div>
               ) : innings1 ? (
-                <span className="text-xs text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-lg block mt-1.5 uppercase tracking-wider animate-pulse">
+                <span className="text-xs text-emerald-450 font-black bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-lg block mt-2 uppercase tracking-wider animate-pulse">
                   Batting Next
                 </span>
               ) : (
-                <span className="text-xs text-slate-500 italic block mt-1">Yet to bat</span>
+                <span className="text-xs text-slate-500 italic block mt-2">Yet to bat</span>
               )}
             </div>
           </div>
@@ -536,12 +536,12 @@ export default function MatchDetail() {
 
         {/* Result margin banner if complete */}
         {match.status === 'completed' && (
-          <div className="bg-emerald-500/10 border-t border-slate-800 px-6 py-4 text-center">
-            <h3 className="text-emerald-400 font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+          <div className="bg-emerald-500/[0.03] border-t border-white/5 px-6 py-4 text-center">
+            <h3 className="text-emerald-450 font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2">
               🏆 {match.result_margin || 'Match Concluded Successfully'}
             </h3>
             {match.man_of_the_match && (
-              <p className="text-slate-400 text-xs mt-1.5 font-medium">
+              <p className="text-slate-400 text-xs mt-1.5 font-semibold">
                 🌟 Man of the Match:{' '}
                 <strong className="text-slate-200">{match.man_of_the_match.name}</strong> (Jersey {match.man_of_the_match.jersey_number})
               </p>
@@ -550,15 +550,15 @@ export default function MatchDetail() {
         )}
       </section>
 
-      {/* 2. REALTIME LIVE STATS BAR (Only if match is currently live) */}
+      {/* 2. REALTIME LIVE STATS BAR */}
       {match.status === 'live' && currentInnings && (
-        <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-800 pb-4">
+        <section className="bento-card p-6 shadow-xl space-y-6 border border-white/5!">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/5 pb-4">
             <div>
               <span className="text-[10px] text-emerald-400 font-black uppercase tracking-widest block">Innings {match.current_innings} Scorecard</span>
               <div className="flex items-baseline gap-2 mt-1">
                 <span className="text-3xl font-black text-white">{currentInnings.runs}/{currentInnings.wickets}</span>
-                <span className="text-slate-400 font-semibold text-sm">
+                <span className="text-slate-400 font-bold text-xs uppercase tracking-wider">
                   ({getOversString(currentBalls)} / {match.overs_limit} ov)
                 </span>
               </div>
@@ -566,58 +566,58 @@ export default function MatchDetail() {
 
             <div className="flex gap-6 text-center">
               <div>
-                <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider">Run Rate (CRR)</span>
+                <span className="block text-[9px] text-slate-500 font-black uppercase tracking-widest">Run Rate (CRR)</span>
                 <span className="text-lg font-black text-white mt-0.5 block">{currentCRR}</span>
               </div>
               {requiredRRR && (
                 <div>
-                  <span className="block text-[9px] text-slate-500 font-bold uppercase tracking-wider">Req Rate (RRR)</span>
-                  <span className="text-lg font-black text-amber-400 mt-0.5 block">{requiredRRR}</span>
+                  <span className="block text-[9px] text-slate-500 font-black uppercase tracking-widest">Req Rate (RRR)</span>
+                  <span className="text-lg font-black text-amber-450 mt-0.5 block">{requiredRRR}</span>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Active Batsmen & Bowlers details row */}
+          {/* Active Batter & Bowler row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-            {/* Batters */}
+            {/* Batting */}
             <div className="space-y-3">
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Batting</h3>
-              <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl p-4 space-y-3">
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Batting</h3>
+              <div className="bg-slate-950/40 border border-white/5 rounded-2xl p-4 space-y-3 shadow-inner">
                 {currentBatsmen.length > 0 ? (
                   currentBatsmen.map((b) => (
                     <div key={b.id} className="flex justify-between items-center text-xs">
-                      <span className="font-bold text-slate-200 flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> {b.name}
+                      <span className="font-extrabold text-slate-200 flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500"></span> {b.name}
                       </span>
-                      <div className="text-slate-300 font-medium">
-                        <strong className="text-white text-sm font-extrabold mr-1">{b.runs}</strong>
+                      <div className="text-slate-350 font-medium">
+                        <strong className="text-white text-sm font-black mr-1">{b.runs}</strong>
                         <span>({b.balls}b, {b.fours}x4, {b.sixes}x6)</span>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-xs text-slate-500 italic">Determining active batsmen...</p>
+                  <p className="text-xs text-slate-550 italic">Determining active batsmen...</p>
                 )}
               </div>
             </div>
 
-            {/* Bowlers */}
+            {/* Bowling */}
             <div className="space-y-3">
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Bowling</h3>
-              <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl p-4 space-y-3">
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Bowling</h3>
+              <div className="bg-slate-950/40 border border-white/5 rounded-2xl p-4 space-y-3 shadow-inner">
                 {activeBowler ? (
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-bold text-slate-200 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span> {activeBowler.name}
+                    <span className="font-extrabold text-slate-200 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-purple-500 shadow-sm shadow-purple-550"></span> {activeBowler.name}
                     </span>
-                    <div className="text-slate-300 font-medium">
-                      <strong className="text-white text-sm font-extrabold mr-1">{activeBowler.wickets}</strong>
+                    <div className="text-slate-355 font-medium">
+                      <strong className="text-white text-sm font-black mr-1">{activeBowler.wickets}</strong>
                       <span>wickets for {activeBowler.runsConceded} runs ({activeBowler.overs} ov)</span>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-xs text-slate-500 italic">Bowler selection pending...</p>
+                  <p className="text-xs text-slate-550 italic">Bowler selection pending...</p>
                 )}
               </div>
             </div>
@@ -625,13 +625,13 @@ export default function MatchDetail() {
 
           {/* Recent balls visual */}
           {recentOverBalls.length > 0 && (
-            <div className="pt-2 space-y-2 border-t border-slate-800/40">
-              <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">This Over</span>
+            <div className="pt-3 space-y-2 border-t border-white/5">
+              <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">This Over</span>
               <div className="flex gap-2 flex-wrap items-center">
                 {recentOverBalls.map((ball) => (
                   <span
                     key={ball.id}
-                    className={`inline-flex items-center justify-center w-7 h-7 rounded-full border text-xs font-extrabold shadow-sm ${getBallTrackerColorClass(
+                    className={`inline-flex items-center justify-center w-7 h-7 rounded-full border text-xs font-black shadow-sm ${getBallTrackerColorClass(
                       ball
                     )}`}
                   >
@@ -646,13 +646,13 @@ export default function MatchDetail() {
 
       {/* 3. TABS SELECTOR */}
       <section className="space-y-6">
-        <div className="border-b border-slate-800 flex gap-4 md:gap-6 overflow-x-auto whitespace-nowrap">
+        <div className="border-b border-white/5 flex gap-4 md:gap-6 overflow-x-auto whitespace-nowrap scrollbar-none pb-0.5">
           <button
             onClick={() => setActiveTab('live')}
-            className={`py-3 text-xs md:text-sm font-semibold tracking-wider uppercase border-b-2 px-1 relative transition-colors ${
+            className={`py-3 text-xs md:text-xs font-black tracking-widest uppercase border-b-2 px-1 relative transition-colors ${
               activeTab === 'live'
                 ? 'border-emerald-400 text-emerald-400'
-                : 'border-transparent text-slate-400 hover:text-white'
+                : 'border-transparent text-slate-450 hover:text-white'
             }`}
           >
             📋 Match Center
@@ -660,10 +660,10 @@ export default function MatchDetail() {
           {innings1 && (
             <button
               onClick={() => setActiveTab('scorecard1')}
-              className={`py-3 text-xs md:text-sm font-semibold tracking-wider uppercase border-b-2 px-1 relative transition-colors ${
+              className={`py-3 text-xs md:text-xs font-black tracking-widest uppercase border-b-2 px-1 relative transition-colors ${
                 activeTab === 'scorecard1'
                   ? 'border-emerald-400 text-emerald-400'
-                  : 'border-transparent text-slate-400 hover:text-white'
+                  : 'border-transparent text-slate-450 hover:text-white'
               }`}
             >
               🏏 {match.team1?.short_name} Scorecard
@@ -672,10 +672,10 @@ export default function MatchDetail() {
           {innings2 && (
             <button
               onClick={() => setActiveTab('scorecard2')}
-              className={`py-3 text-xs md:text-sm font-semibold tracking-wider uppercase border-b-2 px-1 relative transition-colors ${
+              className={`py-3 text-xs md:text-xs font-black tracking-widest uppercase border-b-2 px-1 relative transition-colors ${
                 activeTab === 'scorecard2'
                   ? 'border-emerald-400 text-emerald-400'
-                  : 'border-transparent text-slate-400 hover:text-white'
+                  : 'border-transparent text-slate-450 hover:text-white'
               }`}
             >
               🏏 {match.team2?.short_name} Scorecard
@@ -683,22 +683,22 @@ export default function MatchDetail() {
           )}
           <button
             onClick={() => setActiveTab('gallery')}
-            className={`py-3 text-xs md:text-sm font-semibold tracking-wider uppercase border-b-2 px-1 relative transition-colors ${
+            className={`py-3 text-xs md:text-xs font-black tracking-widest uppercase border-b-2 px-1 relative transition-colors ${
               activeTab === 'gallery'
                 ? 'border-emerald-400 text-emerald-400'
-                : 'border-transparent text-slate-400 hover:text-white'
+                : 'border-transparent text-slate-450 hover:text-white'
             }`}
           >
             🖼️ Match Gallery ({photos?.length || 0})
           </button>
         </div>
 
-        {/* Tab 1: Match Center (Live commentary / feed) */}
+        {/* Tab 1: Match Center */}
         {activeTab === 'live' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Commentary Feed (Last 10 balls) */}
+            {/* Commentary Feed */}
             <div className="lg:col-span-2 space-y-4">
-              <h3 className="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-1.5">
+              <h3 className="text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-1.5 border-b border-white/5 pb-2">
                 <MessageCircle className="w-4 h-4 text-emerald-400" /> Commentary Feed
               </h3>
 
@@ -707,20 +707,20 @@ export default function MatchDetail() {
                   {commentaryFeed.map((feed) => (
                     <div
                       key={feed.id}
-                      className={`p-4 rounded-xl border border-l-4 shadow-sm flex items-start gap-4 transition-all duration-200 ${feed.bgClass} ${feed.borderClass}`}
+                      className={`p-4 rounded-2xl border border-white/5 border-l-4 shadow-sm flex items-start gap-4 transition-all duration-200 bg-slate-900/25 ${feed.bgClass} ${feed.borderClass}`}
                     >
-                      <span className="px-2 py-1 bg-slate-950 border border-slate-800 text-[10px] text-slate-400 font-extrabold rounded shadow shrink-0">
+                      <span className="px-2 py-1 bg-slate-950 border border-white/5 text-[9px] font-black rounded-lg shadow shrink-0">
                         {feed.over}
                       </span>
-                      <p className="text-xs md:text-sm font-medium text-slate-200 mt-0.5 leading-relaxed">
+                      <p className="text-xs md:text-sm font-semibold text-slate-200 mt-0.5 leading-relaxed">
                         {feed.text}
                       </p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-8 text-center text-slate-500">
-                  <MessageCircle className="w-8 h-8 mx-auto text-slate-700 mb-2" />
+                <div className="bento-card p-12 text-center text-slate-450">
+                  <MessageCircle className="w-8 h-8 mx-auto text-slate-650 mb-2" />
                   <p className="text-xs font-semibold">Commentary details will stream live here as soon as scorers start recording balls.</p>
                 </div>
               )}
@@ -728,62 +728,62 @@ export default function MatchDetail() {
 
             {/* FOW & Partnership aggregates */}
             <div className="space-y-6">
-              <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4 shadow-lg">
-                <h3 className="text-xs font-bold text-white uppercase tracking-widest border-b border-slate-800 pb-2">
+              <div className="bento-card p-5 space-y-4 border border-white/5!">
+                <h3 className="text-[10px] font-black text-white uppercase tracking-widest border-b border-white/5 pb-2">
                   Fall of Wickets
                 </h3>
                 {currentFOW.length > 0 ? (
-                  <div className="space-y-2.5">
+                  <div className="space-y-3">
                     {currentFOW.map((wicket) => (
-                      <div key={wicket.number} className="flex justify-between items-center text-xs text-slate-300">
+                      <div key={wicket.number} className="flex justify-between items-center text-xs text-slate-350">
                         <span className="font-semibold text-slate-400">
-                          {wicket.number} - {wicket.score} ({wicket.batsmanName})
+                          {wicket.number} - <strong className="text-white font-extrabold">{wicket.score}</strong> ({wicket.batsmanName})
                         </span>
-                        <span className="font-bold text-slate-500">Over {wicket.over}</span>
+                        <span className="font-extrabold text-[10px] text-slate-500 uppercase">Over {wicket.over}</span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-slate-500 italic">No wickets fallen in this innings.</p>
+                  <p className="text-xs text-slate-550 italic">No wickets fallen in this innings.</p>
                 )}
               </div>
             </div>
           </div>
         )}
 
-        {/* Tab 2: Innings 1 Full Scorecard */}
+        {/* Tab 2: Innings 1 Scorecard */}
         {activeTab === 'scorecard1' && innings1 && (
           <div className="space-y-6">
             {/* Batting Card */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-              <div className="px-5 py-3.5 bg-slate-950/40 border-b border-slate-800 flex justify-between items-center">
-                <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Batting</h3>
-                <span className="text-xs font-extrabold text-white">
+            <div className="bento-card overflow-hidden p-0! border border-white/5!">
+              <div className="px-5 py-4 bg-slate-950/40 border-b border-white/5 flex justify-between items-center">
+                <h3 className="text-xs font-black text-emerald-400 uppercase tracking-widest">Batting</h3>
+                <span className="text-xs font-black text-white">
                   {innings1.runs}/{innings1.wickets} ({getOversString(inn1Balls)} ov)
                 </span>
               </div>
               <table className="w-full text-left text-xs md:text-sm">
                 <thead>
-                  <tr className="bg-slate-950/20 text-slate-400 uppercase tracking-widest text-[9px] border-b border-slate-800">
-                    <th className="py-2.5 px-5">Batsman</th>
-                    <th className="py-2.5 px-2">Dismissal</th>
-                    <th className="py-2.5 px-2 text-center w-14">Runs</th>
-                    <th className="py-2.5 px-2 text-center w-14">Balls</th>
-                    <th className="py-2.5 px-2 text-center w-12">4s</th>
-                    <th className="py-2.5 px-2 text-center w-12">6s</th>
-                    <th className="py-2.5 px-5 text-right w-20">SR</th>
+                  <tr className="bg-slate-950/20 text-slate-400 uppercase tracking-widest text-[9px] border-b border-white/5">
+                    <th className="py-3 px-5">Batsman</th>
+                    <th className="py-3 px-2">Dismissal</th>
+                    <th className="py-3 px-2 text-center w-14">Runs</th>
+                    <th className="py-3 px-2 text-center w-14">Balls</th>
+                    <th className="py-3 px-2 text-center w-12">4s</th>
+                    <th className="py-3 px-2 text-center w-12">6s</th>
+                    <th className="py-3 px-5 text-right w-20">SR</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/40">
+                <tbody className="divide-y divide-white/5">
                   {getBatsmanListStats(inn1Balls, innings1.batting_team_id).map((b) => (
-                    <tr key={b.id} className="hover:bg-slate-950/10">
-                      <td className="py-3 px-5 font-bold text-slate-200">{b.name}</td>
-                      <td className="py-3 px-2 text-slate-500 text-xs italic">{b.dismissalText}</td>
-                      <td className="py-3 px-2 text-center font-extrabold text-white">{b.runs}</td>
-                      <td className="py-3 px-2 text-center text-slate-300">{b.balls}</td>
-                      <td className="py-3 px-2 text-center text-slate-400">{b.fours}</td>
-                      <td className="py-3 px-2 text-center text-slate-400">{b.sixes}</td>
-                      <td className="py-3 px-5 text-right font-semibold text-slate-400">
+                    <tr key={b.id} className="hover:bg-white/[0.01]">
+                      <td className="py-3.5 px-5 font-bold text-slate-200">{b.name}</td>
+                      <td className="py-3.5 px-2 text-slate-500 text-xs italic">{b.dismissalText}</td>
+                      <td className="py-3.5 px-2 text-center font-black text-white">{b.runs}</td>
+                      <td className="py-3.5 px-2 text-center text-slate-300">{b.balls}</td>
+                      <td className="py-3.5 px-2 text-center text-slate-400">{b.fours}</td>
+                      <td className="py-3.5 px-2 text-center text-slate-400">{b.sixes}</td>
+                      <td className="py-3.5 px-5 text-right font-extrabold text-slate-400">
                         {b.balls > 0 ? ((b.runs * 100) / b.balls).toFixed(1) : '0.0'}
                       </td>
                     </tr>
@@ -793,30 +793,30 @@ export default function MatchDetail() {
             </div>
 
             {/* Bowling Card */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-              <div className="px-5 py-3.5 bg-slate-950/40 border-b border-slate-800">
-                <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Bowling</h3>
+            <div className="bento-card overflow-hidden p-0! border border-white/5!">
+              <div className="px-5 py-4 bg-slate-950/40 border-b border-white/5">
+                <h3 className="text-xs font-black text-emerald-400 uppercase tracking-widest">Bowling</h3>
               </div>
               <table className="w-full text-left text-xs md:text-sm">
                 <thead>
-                  <tr className="bg-slate-950/20 text-slate-400 uppercase tracking-widest text-[9px] border-b border-slate-800">
-                    <th className="py-2.5 px-5">Bowler</th>
-                    <th className="py-2.5 px-2 text-center w-14">Overs</th>
-                    <th className="py-2.5 px-2 text-center w-14">Maidens</th>
-                    <th className="py-2.5 px-2 text-center w-14">Runs</th>
-                    <th className="py-2.5 px-2 text-center w-14 font-bold text-slate-200">Wickets</th>
-                    <th className="py-2.5 px-5 text-right w-20">Economy</th>
+                  <tr className="bg-slate-950/20 text-slate-400 uppercase tracking-widest text-[9px] border-b border-white/5">
+                    <th className="py-3 px-5">Bowler</th>
+                    <th className="py-3 px-2 text-center w-14">Overs</th>
+                    <th className="py-3 px-2 text-center w-14">Maidens</th>
+                    <th className="py-3 px-2 text-center w-14">Runs</th>
+                    <th className="py-3 px-2 text-center w-14 font-extrabold text-slate-250">Wickets</th>
+                    <th className="py-3 px-5 text-right w-20">Economy</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/40">
+                <tbody className="divide-y divide-white/5">
                   {getBowlerListStats(inn1Balls, innings1.bowling_team_id).map((b) => (
-                    <tr key={b.id} className="hover:bg-slate-950/10">
-                      <td className="py-3 px-5 font-bold text-slate-200">{b.name}</td>
-                      <td className="py-3 px-2 text-center text-slate-300 font-semibold">{b.overs}</td>
-                      <td className="py-3 px-2 text-center text-slate-400">{b.maidens}</td>
-                      <td className="py-3 px-2 text-center text-slate-300">{b.runsConceded}</td>
-                      <td className="py-3 px-2 text-center font-extrabold text-emerald-400 text-sm">{b.wickets}</td>
-                      <td className="py-3 px-5 text-right font-semibold text-slate-400">
+                    <tr key={b.id} className="hover:bg-white/[0.01]">
+                      <td className="py-3.5 px-5 font-bold text-slate-200">{b.name}</td>
+                      <td className="py-3.5 px-2 text-center text-slate-350 font-semibold">{b.overs}</td>
+                      <td className="py-3.5 px-2 text-center text-slate-450">{b.maidens}</td>
+                      <td className="py-3.5 px-2 text-center text-slate-300">{b.runsConceded}</td>
+                      <td className="py-3.5 px-2 text-center font-black text-emerald-450 text-sm">{b.wickets}</td>
+                      <td className="py-3.5 px-5 text-right font-extrabold text-slate-405">
                         {b.ballsBowled > 0 ? ((b.runsConceded * 6) / b.ballsBowled).toFixed(2) : '0.00'}
                       </td>
                     </tr>
@@ -827,39 +827,39 @@ export default function MatchDetail() {
           </div>
         )}
 
-        {/* Tab 3: Innings 2 Full Scorecard */}
+        {/* Tab 3: Innings 2 Scorecard */}
         {activeTab === 'scorecard2' && innings2 && (
           <div className="space-y-6">
             {/* Batting Card */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-              <div className="px-5 py-3.5 bg-slate-950/40 border-b border-slate-800 flex justify-between items-center">
-                <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Batting</h3>
-                <span className="text-xs font-extrabold text-white">
+            <div className="bento-card overflow-hidden p-0! border border-white/5!">
+              <div className="px-5 py-4 bg-slate-950/40 border-b border-white/5 flex justify-between items-center">
+                <h3 className="text-xs font-black text-emerald-400 uppercase tracking-widest">Batting</h3>
+                <span className="text-xs font-black text-white">
                   {innings2.runs}/{innings2.wickets} ({getOversString(inn2Balls)} ov)
                 </span>
               </div>
               <table className="w-full text-left text-xs md:text-sm">
                 <thead>
-                  <tr className="bg-slate-950/20 text-slate-400 uppercase tracking-widest text-[9px] border-b border-slate-800">
-                    <th className="py-2.5 px-5">Batsman</th>
-                    <th className="py-2.5 px-2">Dismissal</th>
-                    <th className="py-2.5 px-2 text-center w-14">Runs</th>
-                    <th className="py-2.5 px-2 text-center w-14">Balls</th>
-                    <th className="py-2.5 px-2 text-center w-12">4s</th>
-                    <th className="py-2.5 px-2 text-center w-12">6s</th>
-                    <th className="py-2.5 px-5 text-right w-20">SR</th>
+                  <tr className="bg-slate-950/20 text-slate-400 uppercase tracking-widest text-[9px] border-b border-white/5">
+                    <th className="py-3 px-5">Batsman</th>
+                    <th className="py-3 px-2">Dismissal</th>
+                    <th className="py-3 px-2 text-center w-14">Runs</th>
+                    <th className="py-3 px-2 text-center w-14">Balls</th>
+                    <th className="py-3 px-2 text-center w-12">4s</th>
+                    <th className="py-3 px-2 text-center w-12">6s</th>
+                    <th className="py-3 px-5 text-right w-20">SR</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/40">
+                <tbody className="divide-y divide-white/5">
                   {getBatsmanListStats(inn2Balls, innings2.batting_team_id).map((b) => (
-                    <tr key={b.id} className="hover:bg-slate-950/10">
-                      <td className="py-3 px-5 font-bold text-slate-200">{b.name}</td>
-                      <td className="py-3 px-2 text-slate-500 text-xs italic">{b.dismissalText}</td>
-                      <td className="py-3 px-2 text-center font-extrabold text-white">{b.runs}</td>
-                      <td className="py-3 px-2 text-center text-slate-300">{b.balls}</td>
-                      <td className="py-3 px-2 text-center text-slate-400">{b.fours}</td>
-                      <td className="py-3 px-2 text-center text-slate-400">{b.sixes}</td>
-                      <td className="py-3 px-5 text-right font-semibold text-slate-400">
+                    <tr key={b.id} className="hover:bg-white/[0.01]">
+                      <td className="py-3.5 px-5 font-bold text-slate-200">{b.name}</td>
+                      <td className="py-3.5 px-2 text-slate-500 text-xs italic">{b.dismissalText}</td>
+                      <td className="py-3.5 px-2 text-center font-black text-white">{b.runs}</td>
+                      <td className="py-3.5 px-2 text-center text-slate-300">{b.balls}</td>
+                      <td className="py-3.5 px-2 text-center text-slate-400">{b.fours}</td>
+                      <td className="py-3.5 px-2 text-center text-slate-400">{b.sixes}</td>
+                      <td className="py-3.5 px-5 text-right font-extrabold text-slate-400">
                         {b.balls > 0 ? ((b.runs * 100) / b.balls).toFixed(1) : '0.0'}
                       </td>
                     </tr>
@@ -869,30 +869,30 @@ export default function MatchDetail() {
             </div>
 
             {/* Bowling Card */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-              <div className="px-5 py-3.5 bg-slate-950/40 border-b border-slate-800">
-                <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Bowling</h3>
+            <div className="bento-card overflow-hidden p-0! border border-white/5!">
+              <div className="px-5 py-4 bg-slate-950/40 border-b border-white/5">
+                <h3 className="text-xs font-black text-emerald-400 uppercase tracking-widest">Bowling</h3>
               </div>
               <table className="w-full text-left text-xs md:text-sm">
                 <thead>
-                  <tr className="bg-slate-950/20 text-slate-400 uppercase tracking-widest text-[9px] border-b border-slate-800">
-                    <th className="py-2.5 px-5">Bowler</th>
-                    <th className="py-2.5 px-2 text-center w-14">Overs</th>
-                    <th className="py-2.5 px-2 text-center w-14">Maidens</th>
-                    <th className="py-2.5 px-2 text-center w-14">Runs</th>
-                    <th className="py-2.5 px-2 text-center w-14 font-bold text-slate-200">Wickets</th>
-                    <th className="py-2.5 px-5 text-right w-20">Economy</th>
+                  <tr className="bg-slate-950/20 text-slate-400 uppercase tracking-widest text-[9px] border-b border-white/5">
+                    <th className="py-3 px-5">Bowler</th>
+                    <th className="py-3 px-2 text-center w-14">Overs</th>
+                    <th className="py-3 px-2 text-center w-14">Maidens</th>
+                    <th className="py-3 px-2 text-center w-14">Runs</th>
+                    <th className="py-3 px-2 text-center w-14 font-extrabold text-slate-250">Wickets</th>
+                    <th className="py-3 px-5 text-right w-20">Economy</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/40">
+                <tbody className="divide-y divide-white/5">
                   {getBowlerListStats(inn2Balls, innings2.bowling_team_id).map((b) => (
-                    <tr key={b.id} className="hover:bg-slate-950/10">
-                      <td className="py-3 px-5 font-bold text-slate-200">{b.name}</td>
-                      <td className="py-3 px-2 text-center text-slate-300 font-semibold">{b.overs}</td>
-                      <td className="py-3 px-2 text-center text-slate-400">{b.maidens}</td>
-                      <td className="py-3 px-2 text-center text-slate-300">{b.runsConceded}</td>
-                      <td className="py-3 px-2 text-center font-extrabold text-emerald-400 text-sm">{b.wickets}</td>
-                      <td className="py-3 px-5 text-right font-semibold text-slate-400">
+                    <tr key={b.id} className="hover:bg-white/[0.01]">
+                      <td className="py-3.5 px-5 font-bold text-slate-200">{b.name}</td>
+                      <td className="py-3.5 px-2 text-center text-slate-350 font-semibold">{b.overs}</td>
+                      <td className="py-3.5 px-2 text-center text-slate-455">{b.maidens}</td>
+                      <td className="py-3.5 px-2 text-center text-slate-300">{b.runsConceded}</td>
+                      <td className="py-3.5 px-2 text-center font-black text-emerald-450 text-sm">{b.wickets}</td>
+                      <td className="py-3.5 px-5 text-right font-extrabold text-slate-405">
                         {b.ballsBowled > 0 ? ((b.runsConceded * 6) / b.ballsBowled).toFixed(2) : '0.00'}
                       </td>
                     </tr>
@@ -907,20 +907,20 @@ export default function MatchDetail() {
         {activeTab === 'gallery' && (
           <div>
             {photos && photos.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {photos.map((photo) => (
                   <div
                     key={photo.id}
                     onClick={() => setLightboxImg(photo.image_url)}
-                    className="bg-slate-900 border border-slate-800/80 rounded-xl overflow-hidden shadow-md cursor-pointer hover:border-emerald-500/30 transition-all group relative aspect-video"
+                    className="bento-card overflow-hidden shadow-md cursor-pointer hover:border-emerald-500/20 transition-all hover:-translate-y-0.5 group relative aspect-video p-0! border border-white/5!"
                   >
                     <img
                       src={photo.image_url}
                       alt={photo.caption}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                      <span className="bg-emerald-500 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow">
+                      <span className="bg-emerald-500 text-slate-950 font-black text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow">
                         <Eye className="w-4 h-4" /> View Full
                       </span>
                     </div>
@@ -928,10 +928,10 @@ export default function MatchDetail() {
                 ))}
               </div>
             ) : (
-              <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-12 text-center text-slate-500">
-                <Image className="w-10 h-10 mx-auto text-slate-700 mb-2" />
+              <div className="bento-card p-12 text-center text-slate-450 border border-white/5!">
+                <Image className="w-10 h-10 mx-auto text-slate-650 mb-2" />
                 <p className="text-sm font-semibold">No photos from this match yet.</p>
-                <p className="text-xs text-slate-600 mt-1">
+                <p className="text-xs text-slate-550 mt-1">
                   Admins can upload and tag photos to this match in the Admin Panel gallery tab.
                 </p>
               </div>
@@ -943,13 +943,13 @@ export default function MatchDetail() {
       {/* Lightbox Modal */}
       {lightboxImg && (
         <div
-          className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4 cursor-zoom-out"
+          className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-sm flex items-center justify-center p-4 cursor-zoom-out"
           onClick={() => setLightboxImg(null)}
         >
           <img
             src={lightboxImg}
             alt="Gallery Lightbox"
-            className="max-w-full max-h-[85vh] rounded-2xl border border-slate-800 shadow-2xl object-contain animate-fadeIn"
+            className="max-w-full max-h-[85vh] rounded-3xl border border-white/5 shadow-2xl object-contain animate-fadeIn"
           />
         </div>
       )}

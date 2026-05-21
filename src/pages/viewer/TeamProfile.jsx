@@ -113,10 +113,10 @@ export default function TeamProfile() {
   if (loadingTeam) return <Spinner message="Loading team profile..." />
   if (!team) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center text-slate-400">
+      <div className="bento-card border border-white/5! p-12 text-center text-slate-450">
         <Shield className="w-10 h-10 mx-auto text-red-500 mb-2 animate-pulse" />
-        <p className="font-bold">Team Not Found</p>
-        <Link to="/teams" className="text-emerald-400 font-semibold mt-4 block hover:underline">
+        <p className="font-extrabold text-white">Team Not Found</p>
+        <Link to="/teams" className="text-emerald-450 font-black mt-4 block hover:underline">
           &larr; Back to Teams Catalog
         </Link>
       </div>
@@ -126,11 +126,11 @@ export default function TeamProfile() {
   return (
     <div className="space-y-8">
       {/* 1. HERO BANNER PROFILE */}
-      <section className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8">
+      <section className="bento-card relative overflow-hidden border border-white/5! p-6 md:p-10 flex flex-col md:flex-row items-center gap-8">
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/[0.03] to-transparent pointer-events-none"></div>
 
         {/* Logo Shield */}
-        <div className="w-28 h-28 rounded-full border border-slate-800 p-1.5 bg-slate-950 flex items-center justify-center shrink-0 shadow-lg relative overflow-hidden">
+        <div className="w-28 h-28 rounded-full border border-white/10 p-1.5 bg-slate-950 flex items-center justify-center shrink-0 shadow-lg relative overflow-hidden">
           <img
             src={team.logo_url || 'https://placehold.co/150x150/1e293b/ffffff?text=' + encodeURIComponent(team.short_name)}
             alt={team.name}
@@ -140,14 +140,14 @@ export default function TeamProfile() {
 
         {/* Details text */}
         <div className="text-center md:text-left space-y-2.5">
-          <span className="text-[10px] text-emerald-400 font-extrabold uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/15 px-3 py-1 rounded-full inline-block">
+          <span className="text-[10px] text-emerald-400 font-black uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/15 px-3 py-1 rounded-full inline-block">
             {team.short_name} Member Squad
           </span>
-          <h1 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight leading-tight">
+          <h1 className="text-2xl md:text-4xl font-black text-white tracking-tight leading-tight">
             {team.name}
           </h1>
-          <p className="text-slate-400 text-xs md:text-sm max-w-xl leading-relaxed">
-            Registered participant of the society league. View our squad details, match performance records, and high-low scoreboard limits.
+          <p className="text-slate-400 text-xs md:text-sm max-w-xl leading-relaxed font-semibold">
+            Registered participant of the championship league. View squad details, match performance records, and high-low scoreboard stats.
           </p>
         </div>
       </section>
@@ -155,69 +155,69 @@ export default function TeamProfile() {
       {/* 2. STATS OVERVIEW CARDS */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Matches */}
-        <div className="bg-slate-900 border border-slate-800/80 rounded-2xl p-4 flex items-center gap-4 shadow-md">
-          <div className="w-10 h-10 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-center text-emerald-400 shrink-0">
+        <div className="bento-card border border-white/5! p-4 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-slate-950/60 border border-white/5 flex items-center justify-center text-emerald-450 shrink-0">
             <Calendar className="w-5 h-5" />
           </div>
           <div>
-            <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Matches</span>
-            <span className="text-lg font-extrabold text-white">{standings?.played || 0}</span>
+            <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Matches</span>
+            <span className="text-xl font-black text-white">{standings?.played || 0}</span>
           </div>
         </div>
 
         {/* Wins */}
-        <div className="bg-slate-900 border border-slate-800/80 rounded-2xl p-4 flex items-center gap-4 shadow-md">
-          <div className="w-10 h-10 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-center text-emerald-400 shrink-0">
+        <div className="bento-card border border-white/5! p-4 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-slate-950/60 border border-white/5 flex items-center justify-center text-emerald-450 shrink-0">
             <Trophy className="w-5 h-5" />
           </div>
           <div>
-            <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Won</span>
-            <span className="text-lg font-extrabold text-white">{standings?.won || 0}</span>
+            <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Won</span>
+            <span className="text-xl font-black text-white">{standings?.won || 0}</span>
           </div>
         </div>
 
         {/* Highest Score */}
-        <div className="bg-slate-900 border border-slate-800/80 rounded-2xl p-4 flex items-center gap-4 shadow-md">
-          <div className="w-10 h-10 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-center text-amber-500 shrink-0">
+        <div className="bento-card border border-white/5! p-4 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-slate-950/60 border border-white/5 flex items-center justify-center text-amber-500 shrink-0">
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
-            <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Highest Runs</span>
-            <span className="text-lg font-extrabold text-white">{scoreStats?.highest}</span>
+            <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Highest Runs</span>
+            <span className="text-xl font-black text-white">{scoreStats?.highest}</span>
           </div>
         </div>
 
         {/* Lowest Score */}
-        <div className="bg-slate-900 border border-slate-800/80 rounded-2xl p-4 flex items-center gap-4 shadow-md">
-          <div className="w-10 h-10 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-center text-slate-500 shrink-0">
+        <div className="bento-card border border-white/5! p-4 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-slate-950/60 border border-white/5 flex items-center justify-center text-slate-450 shrink-0">
             <BarChart2 className="w-5 h-5" />
           </div>
           <div>
-            <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Lowest Runs</span>
-            <span className="text-lg font-extrabold text-white">{scoreStats?.lowest}</span>
+            <span className="block text-[10px] text-slate-500 font-black uppercase tracking-widest">Lowest Runs</span>
+            <span className="text-xl font-black text-white">{scoreStats?.lowest}</span>
           </div>
         </div>
       </section>
 
       {/* 3. TABS TRIGGER */}
       <section className="space-y-6">
-        <div className="border-b border-slate-800 flex gap-6">
+        <div className="border-b border-white/5 flex gap-6 pb-0.5">
           <button
             onClick={() => setActiveTab('squad')}
-            className={`py-3 text-sm font-semibold tracking-wider uppercase border-b-2 px-1 relative transition-colors ${
+            className={`py-3 text-xs font-black tracking-widest uppercase border-b-2 px-1 relative transition-colors ${
               activeTab === 'squad'
                 ? 'border-emerald-400 text-emerald-400'
-                : 'border-transparent text-slate-400 hover:text-white'
+                : 'border-transparent text-slate-450 hover:text-white'
             }`}
           >
             👥 Playing Squad
           </button>
           <button
             onClick={() => setActiveTab('matches')}
-            className={`py-3 text-sm font-semibold tracking-wider uppercase border-b-2 px-1 relative transition-colors ${
+            className={`py-3 text-xs font-black tracking-widest uppercase border-b-2 px-1 relative transition-colors ${
               activeTab === 'matches'
                 ? 'border-emerald-400 text-emerald-400'
-                : 'border-transparent text-slate-400 hover:text-white'
+                : 'border-transparent text-slate-450 hover:text-white'
             }`}
           >
             🏏 Match Logs ({matchHistory?.length || 0})
@@ -235,13 +235,13 @@ export default function TeamProfile() {
                   <Link
                     key={player.id}
                     to={`/player/${player.id}`}
-                    className="bg-slate-900 hover:bg-slate-900/90 border border-slate-800/80 rounded-xl p-5 flex items-center justify-between gap-4 transition-all duration-150 hover:-translate-y-0.5 group"
+                    className="bento-card bento-card-interactive border border-white/5! p-5 flex items-center justify-between gap-4 group"
                   >
                     <div className="space-y-1">
-                      <h3 className="font-bold text-sm text-slate-100 group-hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                      <h3 className="font-extrabold text-sm text-slate-100 group-hover:text-emerald-400 transition-colors flex items-center gap-1.5">
                         {player.name}
                         {player.is_captain && (
-                          <span className="p-0.5 bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[9px] font-black uppercase tracking-wider rounded">
+                          <span className="p-0.5 bg-amber-500/10 text-amber-550 border border-amber-500/20 text-[9px] font-black uppercase tracking-wider rounded">
                             C
                           </span>
                         )}
@@ -251,13 +251,13 @@ export default function TeamProfile() {
                           </span>
                         )}
                       </h3>
-                      <span className="block text-[10px] text-slate-500 font-extrabold uppercase tracking-widest mt-0.5">
+                      <span className="block text-[9px] text-slate-500 font-extrabold uppercase tracking-widest mt-0.5">
                         {player.role.replace('_', ' ')}
                       </span>
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-slate-950 border border-slate-800 font-black text-slate-400 text-sm">
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-slate-950/40 border border-white/5 font-black text-slate-450 text-sm">
                         {player.jersey_number || '-'}
                       </span>
                     </div>
@@ -265,10 +265,10 @@ export default function TeamProfile() {
                 ))}
               </div>
             ) : (
-              <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-12 text-center text-slate-500">
-                <Users className="w-10 h-10 mx-auto text-slate-700 mb-2" />
+              <div className="bento-card border border-white/5! p-12 text-center text-slate-450">
+                <Users className="w-10 h-10 mx-auto text-slate-655 mb-2" />
                 <p className="text-sm font-semibold">No players registered in this team yet.</p>
-                <p className="text-xs text-slate-600 mt-1">
+                <p className="text-xs text-slate-550 mt-1">
                   Team players must be assigned by the administrator panel.
                 </p>
               </div>
@@ -295,10 +295,10 @@ export default function TeamProfile() {
                     <Link
                       key={match.id}
                       to={`/match/${match.id}`}
-                      className="bg-slate-900 hover:bg-slate-900/90 border border-slate-800/80 p-5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all group"
+                      className="bento-card bento-card-interactive border border-white/5! p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
                     >
                       <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-2 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
+                        <div className="flex items-center gap-2 text-[9px] text-slate-500 font-extrabold uppercase tracking-widest">
                           <span>{match.stage}</span>
                           <span>•</span>
                           <span>{formatDate(match.match_date)}</span>
@@ -310,39 +310,39 @@ export default function TeamProfile() {
                           <img
                             src={opponent?.logo_url || 'https://placehold.co/100x100/1e293b/ffffff?text=Opp'}
                             alt={opponent?.name}
-                            className="w-7 h-7 rounded-full object-cover border border-slate-800 bg-slate-950"
+                            className="w-7 h-7 rounded-full object-cover border border-white/5 bg-slate-950"
                           />
-                          <span className="font-extrabold text-sm text-slate-200 group-hover:text-white">
+                          <span className="font-black text-sm text-slate-200 group-hover:text-white transition-colors">
                             vs {opponent?.name}
                           </span>
                         </div>
 
                         {/* Innings score breakdown */}
-                        <div className="flex gap-4 text-xs text-slate-400 font-medium">
+                        <div className="flex gap-4 text-xs text-slate-400 font-semibold">
                           {innings1 && (
                             <span>
-                              {match.team1?.short_name}: {innings1.runs}/{innings1.wickets}
+                              {match.team1?.short_name}: <strong className="text-slate-250">{innings1.runs}/{innings1.wickets}</strong>
                             </span>
                           )}
                           {innings2 && (
                             <span>
-                              {match.team2?.short_name}: {innings2.runs}/{innings2.wickets}
+                              {match.team2?.short_name}: <strong className="text-slate-250">{innings2.runs}/{innings2.wickets}</strong>
                             </span>
                           )}
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between sm:flex-col sm:items-end justify-center shrink-0 border-t border-slate-800 sm:border-none pt-3 sm:pt-0">
+                      <div className="flex items-center justify-between sm:flex-col sm:items-end justify-center shrink-0 border-t border-white/5 sm:border-none pt-3 sm:pt-0">
                         {match.status === 'live' ? (
-                          <span className="px-2 py-0.5 bg-red-500/10 border border-red-500/20 text-red-400 font-extrabold text-[10px] tracking-wider rounded uppercase animate-pulse">
+                          <span className="px-2.5 py-0.5 bg-red-500/10 border border-red-500/20 text-red-400 font-black text-[9px] tracking-widest rounded-lg uppercase animate-pulse">
                             Live
                           </span>
                         ) : match.status === 'completed' ? (
                           <div className="sm:text-right space-y-1">
                             <span
-                              className={`px-2 py-0.5 font-extrabold text-[10px] tracking-wider rounded uppercase ${
+                              className={`px-2.5 py-0.5 font-black text-[9px] tracking-widest rounded-lg uppercase ${
                                 isWinner
-                                  ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
+                                  ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-450'
                                   : isLoser
                                   ? 'bg-red-500/10 border border-red-500/20 text-red-400'
                                   : 'bg-slate-800 text-slate-400'
@@ -351,22 +351,22 @@ export default function TeamProfile() {
                               {isWinner ? 'Won' : isLoser ? 'Lost' : 'Tie'}
                             </span>
                             {match.result_margin && (
-                              <p className="text-[10px] text-slate-500 font-semibold">
+                              <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">
                                 {match.result_margin}
                               </p>
                             )}
                           </div>
                         ) : match.status === 'abandoned' ? (
-                          <span className="px-2 py-0.5 bg-slate-800 text-slate-400 font-extrabold text-[10px] tracking-wider rounded uppercase">
+                          <span className="px-2.5 py-0.5 bg-slate-900 text-slate-455 font-black text-[9px] tracking-widest rounded-lg uppercase">
                             Abandoned
                           </span>
                         ) : (
-                          <span className="px-2 py-0.5 bg-slate-950 border border-slate-800 text-slate-400 font-extrabold text-[10px] tracking-wider rounded uppercase">
+                          <span className="px-2.5 py-0.5 bg-slate-950/40 border border-white/5 text-slate-450 font-black text-[9px] tracking-widest rounded-lg uppercase">
                             Upcoming
                           </span>
                         )}
 
-                        <span className="text-emerald-400 font-bold text-xs mt-2 group-hover:underline">
+                        <span className="text-emerald-450 font-black text-xs mt-2 group-hover:underline uppercase tracking-wider text-[10px]">
                           View details &rarr;
                         </span>
                       </div>
@@ -375,8 +375,8 @@ export default function TeamProfile() {
                 })}
               </div>
             ) : (
-              <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-12 text-center text-slate-500">
-                <Calendar className="w-10 h-10 mx-auto text-slate-700 mb-2" />
+              <div className="bento-card border border-white/5! p-12 text-center text-slate-450">
+                <Calendar className="w-10 h-10 mx-auto text-slate-655 mb-2" />
                 <p className="text-sm font-semibold">No matches recorded for this team.</p>
               </div>
             )}

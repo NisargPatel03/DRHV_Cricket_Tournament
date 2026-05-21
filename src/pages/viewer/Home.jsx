@@ -129,21 +129,21 @@ export default function Home() {
   return (
     <div className="space-y-10">
       {/* 1. HERO BANNER */}
-      <section className="relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl p-6 md:p-12 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8">
+      <section className="relative overflow-hidden bento-card p-6 md:p-12 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8 border border-white/5!">
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-transparent pointer-events-none"></div>
         <div className="relative space-y-4 max-w-xl">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/15 text-emerald-400 font-semibold text-xs tracking-wider uppercase rounded-full border border-emerald-500/25">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 font-semibold text-xs tracking-widest uppercase rounded-full border border-emerald-500/20">
             <Trophy className="w-3.5 h-3.5" /> Official Tournament
           </span>
-          <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight leading-tight">
+          <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
             {settings?.name}
           </h1>
           <p className="text-slate-400 text-sm md:text-base leading-relaxed">
             Welcome to the ultimate housing society cricket league! Follow live ball-by-ball updates, points standings, player statistics, and match highlights in real time.
           </p>
           <div className="flex flex-wrap gap-4 pt-2 justify-center md:justify-start">
-            <div className="flex items-center gap-2 text-slate-300 bg-slate-950/40 border border-slate-800 px-4 py-2 rounded-2xl text-xs font-medium">
-              <Calendar className="w-4 h-4 text-emerald-500" />
+            <div className="flex items-center gap-2 text-slate-350 bg-slate-950/60 border border-white/5 px-4 py-2 rounded-2xl text-xs font-semibold">
+              <Calendar className="w-4 h-4 text-emerald-450" />
               <span>
                 {settings?.start_date ? formatDate(settings.start_date) : 'May 20, 2026'} -{' '}
                 {settings?.end_date ? formatDate(settings.end_date) : 'Jun 10, 2026'}
@@ -154,7 +154,7 @@ export default function Home() {
 
         {/* Floating Tournament Logo Graphic */}
         <div className="relative hidden md:block animate-fadeIn">
-          <div className="w-40 h-40 rounded-3xl bg-slate-950/40 border-2 border-slate-800/80 flex items-center justify-center shadow-2xl rotate-6 hover:rotate-0 transition-all duration-300 group overflow-hidden p-5">
+          <div className="w-40 h-40 rounded-3xl bg-slate-950/40 border-2 border-white/5 flex items-center justify-center shadow-2xl rotate-6 hover:rotate-0 transition-all duration-300 group overflow-hidden p-5">
             <img
               src="/logo.png"
               alt="DRHV Premier League Championship Logo"
@@ -169,7 +169,7 @@ export default function Home() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse-red"></span>
-            <h2 className="text-xl font-bold text-white uppercase tracking-wider">Live Matches</h2>
+            <h2 className="text-xl font-black text-white uppercase tracking-wider">Live Matches</h2>
           </div>
         </div>
 
@@ -185,13 +185,13 @@ export default function Home() {
                 <Link
                   key={match.id}
                   to={`/match/${match.id}`}
-                  className="bg-slate-900 hover:bg-slate-900/90 rounded-2xl border border-slate-800/80 shadow-lg p-6 transition-all duration-200 block relative group overflow-hidden"
+                  className="bento-card bento-card-interactive p-6 block relative group overflow-hidden border border-white/5!"
                 >
-                  <div className="absolute top-0 right-0 px-4 py-1.5 bg-red-500 text-white font-extrabold text-[10px] tracking-widest uppercase flex items-center gap-1 rounded-bl-xl shadow-md animate-pulse">
+                  <div className="absolute top-0 right-0 px-4 py-1.5 bg-red-650 text-white font-extrabold text-[10px] tracking-widest uppercase flex items-center gap-1 rounded-bl-xl shadow-md animate-pulse">
                     <span className="w-1.5 h-1.5 bg-white rounded-full"></span> Live
                   </div>
 
-                  <div className="text-slate-500 text-[10px] uppercase font-bold tracking-widest mb-3">
+                  <div className="text-slate-500 text-[10px] uppercase font-extrabold tracking-widest mb-3">
                     {match.stage} • {match.venue}
                   </div>
 
@@ -203,15 +203,15 @@ export default function Home() {
                         <img
                           src={match.team1?.logo_url || 'https://placehold.co/100x100/1e293b/ffffff?text=T1'}
                           alt={match.team1?.name}
-                          className="w-8 h-8 rounded-full border border-slate-800 object-cover bg-slate-950"
+                          className="w-8 h-8 rounded-full border border-white/10 object-cover bg-slate-950"
                         />
-                        <span className="font-semibold text-sm text-slate-100 group-hover:text-white transition-colors">
+                        <span className="font-extrabold text-sm text-slate-100 group-hover:text-white transition-colors">
                           {match.team1?.name}
                         </span>
                       </div>
                       <div className="text-right">
                         {innings1 ? (
-                          <span className="font-extrabold text-base text-white">
+                          <span className="font-black text-base text-white">
                             {innings1.runs}/{innings1.wickets}
                             <span className="text-xs text-slate-400 font-medium ml-1">
                               ({Math.floor(innings1.total_balls / 6)}.{innings1.total_balls % 6} ov)
@@ -229,22 +229,22 @@ export default function Home() {
                         <img
                           src={match.team2?.logo_url || 'https://placehold.co/100x100/1e293b/ffffff?text=T2'}
                           alt={match.team2?.name}
-                          className="w-8 h-8 rounded-full border border-slate-800 object-cover bg-slate-950"
+                          className="w-8 h-8 rounded-full border border-white/10 object-cover bg-slate-950"
                         />
-                        <span className="font-semibold text-sm text-slate-100 group-hover:text-white transition-colors">
+                        <span className="font-extrabold text-sm text-slate-100 group-hover:text-white transition-colors">
                           {match.team2?.name}
                         </span>
                       </div>
                       <div className="text-right">
                         {innings2 ? (
-                          <span className="font-extrabold text-base text-white">
+                          <span className="font-black text-base text-white">
                             {innings2.runs}/{innings2.wickets}
                             <span className="text-xs text-slate-400 font-medium ml-1">
                               ({Math.floor(innings2.total_balls / 6)}.{innings2.total_balls % 6} ov)
                             </span>
                           </span>
                         ) : innings1 ? (
-                          <span className="text-xs text-emerald-400 font-semibold uppercase tracking-wider bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                          <span className="text-xs text-emerald-450 font-bold uppercase tracking-wider bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/20">
                             Batting Next
                           </span>
                         ) : (
@@ -254,12 +254,12 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-slate-800/60 flex items-center justify-between text-xs">
-                    <span className="text-slate-400 font-medium">
+                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-xs">
+                    <span className="text-slate-450 font-semibold uppercase tracking-wider text-[10px]">
                       Innings {match.current_innings} in progress
                     </span>
-                    <span className="text-emerald-400 font-semibold group-hover:underline flex items-center gap-1">
-                      View Live Scorecard <Play className="w-3 h-3" />
+                    <span className="text-emerald-450 font-black group-hover:underline flex items-center gap-1 uppercase tracking-wider text-[10px]">
+                      View Live Scorecard <Play className="w-3 h-3 fill-current" />
                     </span>
                   </div>
                 </Link>
@@ -267,21 +267,21 @@ export default function Home() {
             })}
           </div>
         ) : (
-          <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-8 text-center text-slate-500">
-            <Zap className="w-8 h-8 mx-auto text-slate-600 mb-2" />
-            <p className="text-sm font-medium">No matches are currently live.</p>
-            <p className="text-xs text-slate-600 mt-1">Check out the upcoming fixtures scheduled below.</p>
+          <div className="bento-card p-12 text-center text-slate-450">
+            <Zap className="w-8 h-8 mx-auto text-slate-650 mb-2" />
+            <p className="text-sm font-semibold">No matches are currently live.</p>
+            <p className="text-xs text-slate-550 mt-1">Check out the upcoming fixtures scheduled below.</p>
           </div>
         )}
       </section>
 
-      {/* 3. SPLIT SECTION (Upcoming Fixtures & points standings) */}
+      {/* 3. SPLIT SECTION (Upcoming Fixtures & standings) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Upcoming Fixtures */}
         <section className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white uppercase tracking-wider">Upcoming Fixtures</h2>
-            <Link to="/fixtures" className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold">
+            <h2 className="text-lg font-black text-white uppercase tracking-wider">Upcoming Fixtures</h2>
+            <Link to="/fixtures" className="text-xs text-emerald-455 hover:text-emerald-350 font-bold uppercase tracking-widest">
               View All
             </Link>
           </div>
@@ -297,15 +297,15 @@ export default function Home() {
                 <Link
                   key={match.id}
                   to={`/match/${match.id}`}
-                  className="bg-slate-900 hover:bg-slate-900/90 border border-slate-800/80 p-4 rounded-xl flex items-center justify-between gap-4 transition-all duration-200 group"
+                  className="bento-card bento-card-interactive p-4 flex items-center justify-between gap-4 group border border-white/5!"
                 >
                   <div className="flex items-center gap-4 flex-1">
                     {/* Date Time */}
-                    <div className="bg-slate-950 border border-slate-800 px-3 py-2 rounded-lg text-center min-w-[70px]">
-                      <span className="block text-[10px] text-emerald-400 font-bold uppercase">
+                    <div className="bg-slate-950/60 border border-white/5 px-3 py-2 rounded-xl text-center min-w-[70px]">
+                      <span className="block text-[10px] text-emerald-400 font-black uppercase tracking-wider">
                         {new Date(match.match_date).toLocaleDateString('en-US', { month: 'short' })}
                       </span>
-                      <span className="block text-base font-extrabold text-white leading-none mt-0.5">
+                      <span className="block text-base font-black text-white leading-none mt-1">
                         {new Date(match.match_date).getDate()}
                       </span>
                     </div>
@@ -313,22 +313,22 @@ export default function Home() {
                     {/* Team versus */}
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-sm text-slate-200 group-hover:text-white">
+                        <span className="font-extrabold text-sm text-slate-200 group-hover:text-white">
                           {match.team1?.name}
                         </span>
-                        <span className="text-[10px] text-slate-500 font-bold">vs</span>
-                        <span className="font-semibold text-sm text-slate-200 group-hover:text-white">
+                        <span className="text-[10px] text-slate-500 font-black uppercase">vs</span>
+                        <span className="font-extrabold text-sm text-slate-200 group-hover:text-white">
                           {match.team2?.name}
                         </span>
                       </div>
-                      <p className="text-[10px] text-slate-500">
+                      <p className="text-[10px] text-slate-450 font-medium">
                         {formatTime(match.match_time)} • {match.venue} • {match.overs_limit} Overs
                       </p>
                     </div>
                   </div>
 
                   <div className="text-right shrink-0">
-                    <span className="text-[10px] bg-slate-950 border border-slate-800 text-slate-400 font-bold tracking-wider px-2 py-1 rounded-md uppercase">
+                    <span className="text-[10px] bg-slate-950/50 border border-white/5 text-slate-400 font-extrabold tracking-widest px-2.5 py-1 rounded-lg uppercase">
                       Upcoming
                     </span>
                   </div>
@@ -336,8 +336,8 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 text-center text-slate-500">
-              <Calendar className="w-6 h-6 mx-auto text-slate-600 mb-2" />
+            <div className="bento-card p-8 text-center text-slate-450">
+              <Calendar className="w-6 h-6 mx-auto text-slate-650 mb-2" />
               <p className="text-xs font-semibold">No upcoming fixtures scheduled.</p>
             </div>
           )}
@@ -346,31 +346,31 @@ export default function Home() {
         {/* Points Table Snippet */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white uppercase tracking-wider">Standings</h2>
-            <Link to="/points-table" className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold">
-              Full Standings
+            <h2 className="text-lg font-black text-white uppercase tracking-wider">Standings</h2>
+            <Link to="/points-table" className="text-xs text-emerald-455 hover:text-emerald-350 font-bold uppercase tracking-widest">
+              Full Table
             </Link>
           </div>
 
           {loadingPoints ? (
             <div className="h-40 bg-slate-900 animate-pulse rounded-xl"></div>
           ) : pointsTable && pointsTable.length > 0 ? (
-            <div className="bg-slate-900 border border-slate-800/80 rounded-2xl overflow-hidden shadow-lg">
+            <div className="bento-card overflow-hidden p-0! border border-white/5!">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="bg-slate-950/60 text-slate-400 uppercase tracking-widest text-[9px] font-bold border-b border-slate-800">
+                  <tr className="bg-slate-950/40 text-slate-400 uppercase tracking-widest text-[9px] font-extrabold border-b border-white/5">
                     <th className="py-3 px-4 text-center">Rank</th>
                     <th className="py-3 px-2">Team</th>
                     <th className="py-3 px-2 text-center">Pts</th>
                     <th className="py-3 px-4 text-right">NRR</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/50">
+                <tbody className="divide-y divide-white/5">
                   {pointsTable.map((team, index) => (
                     <tr
                       key={team.team_id}
-                      className={`hover:bg-slate-950/20 transition-colors ${
-                        index === 0 ? 'bg-emerald-500/5' : ''
+                      className={`hover:bg-white/[0.01] transition-colors ${
+                        index === 0 ? 'bg-emerald-500/[0.01]' : ''
                       }`}
                     >
                       <td className="py-3 px-4 text-center font-extrabold text-slate-400">
@@ -381,15 +381,15 @@ export default function Home() {
                           <img
                             src={team.logo_url || 'https://placehold.co/100x100/1e293b/ffffff?text=T'}
                             alt={team.name}
-                            className="w-5 h-5 rounded-full object-cover bg-slate-950 shrink-0"
+                            className="w-5 h-5 rounded-full object-cover bg-slate-950 border border-white/5 shrink-0"
                           />
-                          <span className="truncate max-w-[80px]">{team.name}</span>
+                          <span className="truncate max-w-[85px] tracking-wide font-semibold">{team.name}</span>
                         </Link>
                       </td>
-                      <td className="py-3 px-2 text-center font-extrabold text-white">
+                      <td className="py-3 px-2 text-center font-black text-white">
                         {team.points}
                       </td>
-                      <td className="py-3 px-4 text-right font-semibold text-slate-300">
+                      <td className="py-3 px-4 text-right font-black text-slate-350">
                         {team.net_run_rate >= 0 ? `+${team.net_run_rate}` : team.net_run_rate}
                       </td>
                     </tr>
@@ -398,8 +398,8 @@ export default function Home() {
               </table>
             </div>
           ) : (
-            <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 text-center text-slate-500">
-              <Trophy className="w-6 h-6 mx-auto text-slate-600 mb-2" />
+            <div className="bento-card p-8 text-center text-slate-450 border border-white/5!">
+              <Trophy className="w-6 h-6 mx-auto text-slate-655 mb-2" />
               <p className="text-xs font-semibold">No standings records available.</p>
             </div>
           )}
@@ -408,10 +408,10 @@ export default function Home() {
 
       {/* 4. LEADER CAPS (Orange & Purple Caps) */}
       <section className="space-y-4">
-        <h2 className="text-xl font-bold text-white uppercase tracking-wider">Tournament Leaders</h2>
+        <h2 className="text-xl font-black text-white uppercase tracking-wider">Tournament Leaders</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Orange Cap */}
-          <div className="bg-slate-900 border border-slate-800/80 rounded-2xl shadow-xl p-6 flex items-center gap-6 relative overflow-hidden group">
+          <div className="bento-card bento-card-interactive p-6 flex items-center gap-6 relative overflow-hidden group border border-white/5!">
             {/* Top border orange bar */}
             <div className="absolute top-0 inset-x-0 h-1 bg-amber-500"></div>
             
@@ -420,7 +420,7 @@ export default function Home() {
             </div>
 
             <div className="flex-1 space-y-1">
-              <div className="text-[10px] text-amber-500 font-extrabold uppercase tracking-widest">
+              <div className="text-[10px] text-amber-500 font-black uppercase tracking-widest">
                 Orange Cap (Top Runs)
               </div>
               {loadingOrange ? (
@@ -432,7 +432,7 @@ export default function Home() {
                       {orangeCap.player_name}
                     </Link>
                   </h3>
-                  <p className="text-slate-400 text-xs font-medium uppercase mt-0.5">
+                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mt-0.5">
                     {orangeCap.team_name} ({orangeCap.team_short})
                   </p>
                 </div>
@@ -444,10 +444,10 @@ export default function Home() {
             <div className="text-right shrink-0">
               {orangeCap ? (
                 <div>
-                  <span className="block text-3xl font-extrabold text-white leading-none">
+                  <span className="block text-3xl font-black text-white leading-none">
                     {orangeCap.runs}
                   </span>
-                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1 block">
+                  <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider mt-1.5 block">
                     Runs • SR {orangeCap.strike_rate}
                   </span>
                 </div>
@@ -458,7 +458,7 @@ export default function Home() {
           </div>
 
           {/* Purple Cap */}
-          <div className="bg-slate-900 border border-slate-800/80 rounded-2xl shadow-xl p-6 flex items-center gap-6 relative overflow-hidden group">
+          <div className="bento-card bento-card-interactive p-6 flex items-center gap-6 relative overflow-hidden group border border-white/5!">
             {/* Top border purple bar */}
             <div className="absolute top-0 inset-x-0 h-1 bg-purple-500"></div>
             
@@ -467,19 +467,19 @@ export default function Home() {
             </div>
 
             <div className="flex-1 space-y-1">
-              <div className="text-[10px] text-purple-400 font-extrabold uppercase tracking-widest">
+              <div className="text-[10px] text-purple-400 font-black uppercase tracking-widest">
                 Purple Cap (Top Wickets)
               </div>
               {loadingPurple ? (
                 <div className="h-6 w-32 bg-slate-950 animate-pulse rounded"></div>
               ) : purpleCap ? (
                 <div>
-                  <h3 className="font-extrabold text-lg text-white hover:text-purple-400">
+                  <h3 className="font-extrabold text-lg text-white hover:text-purple-450">
                     <Link to={`/player/${purpleCap.player_id}`}>
                       {purpleCap.player_name}
                     </Link>
                   </h3>
-                  <p className="text-slate-400 text-xs font-medium uppercase mt-0.5">
+                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mt-0.5">
                     {purpleCap.team_name} ({purpleCap.team_short})
                   </p>
                 </div>
@@ -491,10 +491,10 @@ export default function Home() {
             <div className="text-right shrink-0">
               {purpleCap ? (
                 <div>
-                  <span className="block text-3xl font-extrabold text-white leading-none">
+                  <span className="block text-3xl font-black text-white leading-none">
                     {purpleCap.wickets}
                   </span>
-                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1 block">
+                  <span className="text-[10px] text-slate-500 font-extrabold uppercase tracking-wider mt-1.5 block">
                     Wickets • Econ {purpleCap.economy_rate}
                   </span>
                 </div>
@@ -508,7 +508,7 @@ export default function Home() {
 
       {/* 5. RECENT RESULTS */}
       <section className="space-y-4">
-        <h2 className="text-xl font-bold text-white uppercase tracking-wider">Recent Results</h2>
+        <h2 className="text-xl font-black text-white uppercase tracking-wider">Recent Results</h2>
 
         {loadingCompleted ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -524,9 +524,9 @@ export default function Home() {
                 <Link
                   key={match.id}
                   to={`/match/${match.id}`}
-                  className="bg-slate-900 hover:bg-slate-900/90 rounded-2xl border border-slate-800/80 shadow-md p-5 transition-all duration-200 block group"
+                  className="bento-card bento-card-interactive p-5 block group border border-white/5!"
                 >
-                  <div className="text-[9px] text-slate-500 uppercase font-bold tracking-wider mb-2 flex items-center justify-between">
+                  <div className="text-[9px] text-slate-500 uppercase font-black tracking-wider mb-2 flex items-center justify-between">
                     <span>{match.stage}</span>
                     <span>{formatDate(match.match_date)}</span>
                   </div>
@@ -534,11 +534,11 @@ export default function Home() {
                   <div className="space-y-2 mb-3">
                     {/* Team 1 */}
                     <div className="flex justify-between items-center text-xs">
-                      <span className="font-semibold text-slate-200">
+                      <span className="font-extrabold text-slate-200">
                         {match.team1?.short_name}
                       </span>
                       {innings1 ? (
-                        <span className="font-bold text-white">
+                        <span className="font-black text-white">
                           {innings1.runs}/{innings1.wickets}
                         </span>
                       ) : (
@@ -548,11 +548,11 @@ export default function Home() {
 
                     {/* Team 2 */}
                     <div className="flex justify-between items-center text-xs">
-                      <span className="font-semibold text-slate-200">
+                      <span className="font-extrabold text-slate-200">
                         {match.team2?.short_name}
                       </span>
                       {innings2 ? (
-                        <span className="font-bold text-white">
+                        <span className="font-black text-white">
                           {innings2.runs}/{innings2.wickets}
                         </span>
                       ) : (
@@ -562,7 +562,7 @@ export default function Home() {
                   </div>
 
                   {/* Result margin */}
-                  <div className="text-[10px] text-emerald-400 font-extrabold uppercase tracking-wide border-t border-slate-800/50 pt-2.5">
+                  <div className="text-[10px] text-emerald-450 font-black uppercase tracking-wider border-t border-white/5 pt-2.5">
                     {match.result_margin || 'Match Completed'}
                   </div>
                 </Link>
@@ -570,8 +570,8 @@ export default function Home() {
             })}
           </div>
         ) : (
-          <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 text-center text-slate-500">
-            <Clock className="w-6 h-6 mx-auto text-slate-600 mb-2" />
+          <div className="bento-card p-8 text-center text-slate-450 border border-white/5!">
+            <Clock className="w-6 h-6 mx-auto text-slate-650 mb-2" />
             <p className="text-xs font-semibold">No recent match results available.</p>
           </div>
         )}
