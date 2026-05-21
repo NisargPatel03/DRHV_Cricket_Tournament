@@ -498,3 +498,30 @@ select
 from bowler_balls bb
 left join bowler_best best on best.player_id = bb.player_id
 order by bb.wickets desc, economy_rate asc;
+
+
+-- ============================================================================
+-- SUPABASE STORAGE BUCKET CREATION & POLICIES FOR GALLERY PHOTOS
+-- Paste this in the Supabase SQL Editor to configure bucket and storage RLS
+-- ============================================================================
+
+-- 1. Create the 'gallery' storage bucket if it does not already exist
+insert into storage.buckets (id, name, public)
+values ('gallery', 'gallery', true)
+on conflict (id) do nothing;
+
+-- 2. Policy to allow anyone (anonymous & authenticated) to download/view gallery photos
+create policy "Allow Public Select on Gallery Bucket"
+on storage.objects for select
+using (bucket_id = 'gallery');
+
+-- 3. Policy to allow authenticated users (specifically Admins) to upload gallery photos
+create policy "Allow Authenticated Upload to Gallery Bucket"
+on storage.objects for insert
+with check (bucket_id = 'gallery' and auth.role() = 'authenticated');
+
+-- 4. Policy to allow authenticated users (specifically Admins) to delete gallery photos
+create policy "Allow Authenticated Delete from Gallery Bucket"
+on storage.objects for delete
+using (bucket_id = 'gallery' and auth.role() = 'authenticated');
+
