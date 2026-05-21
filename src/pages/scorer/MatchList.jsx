@@ -110,12 +110,18 @@ export default function MatchList() {
                   Overs limit: {match.overs_limit}
                 </span>
 
-                <Link
-                  to={`/scorer/match/${match.id}`}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] uppercase tracking-wider px-4.5 py-2.5 rounded-xl shadow-md shadow-emerald-600/10 flex items-center gap-1.5 transition-colors border border-emerald-600"
-                >
-                  <Play className="w-3.5 h-3.5 fill-current" /> Start Scoring
-                </Link>
+                {match.status === 'completed' || match.status === 'abandoned' ? (
+                  <span className="bg-slate-100 text-slate-400 font-extrabold text-[10px] uppercase tracking-wider px-4.5 py-2.5 rounded-xl border border-slate-200 cursor-not-allowed">
+                    Scoring Closed
+                  </span>
+                ) : (
+                  <Link
+                    to={`/scorer/match/${match.id}`}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-[10px] uppercase tracking-wider px-4.5 py-2.5 rounded-xl shadow-md shadow-emerald-600/10 flex items-center gap-1.5 transition-colors border border-emerald-600"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-current" /> Start Scoring
+                  </Link>
+                )}
               </div>
             </div>
           ))}

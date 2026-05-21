@@ -620,6 +620,49 @@ export default function LiveScoring() {
   if (loadingMatch) return <Spinner message="Configuring official scoreboard console..." />
   if (!match) return <Spinner message="Loading match data..." />
 
+  // Lock Scoring for Completed or Abandoned matches
+  if (match.status === 'completed' || match.status === 'abandoned') {
+    return (
+      <div className="space-y-6 relative max-w-xl mx-auto py-12">
+        <Link to="/scorer" className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Back to Assigned Roster
+        </Link>
+
+        <div className="bg-white border-2 border-slate-200 rounded-2xl p-8 md:p-12 text-center space-y-6 shadow-sm relative overflow-hidden">
+          <div className="w-16 h-16 bg-slate-50 border border-slate-200 rounded-full flex items-center justify-center mx-auto shadow-inner text-2xl">
+            🔒
+          </div>
+          
+          <div className="space-y-2">
+            <span className="text-[10px] bg-slate-100 text-slate-500 font-extrabold px-2.5 py-1 rounded border border-slate-200 uppercase tracking-widest inline-block">
+              Match {match.status}
+            </span>
+            <h1 className="text-xl font-black text-slate-800 uppercase tracking-tight mt-2">Scoring Console Locked</h1>
+            <p className="text-slate-400 text-xs leading-relaxed max-w-sm mx-auto">
+              This match has already been marked as <strong>{match.status}</strong>. The live scoring dashboard has been archived and is read-only.
+            </p>
+          </div>
+
+          {match.result_margin && (
+            <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-xs font-bold text-emerald-800 flex items-center justify-center gap-2 max-w-sm mx-auto">
+              <Award className="w-4 h-4 shrink-0 text-emerald-600" />
+              <span>{match.result_margin}</span>
+            </div>
+          )}
+
+          <div className="pt-4 border-t border-slate-100">
+            <Link
+              to="/scorer"
+              className="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-white font-extrabold text-xs uppercase tracking-wider py-3 px-6 rounded-xl transition-colors shadow-md"
+            >
+              Return to Assigned Roster
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // 1. SETUP UI STAGE (Status upcoming)
   if (match.status === 'upcoming') {
     return (
