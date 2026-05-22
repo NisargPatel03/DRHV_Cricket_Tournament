@@ -92,7 +92,8 @@ export default function TeamProfile() {
           *,
           team1:team1_id (name, short_name, logo_url),
           team2:team2_id (name, short_name, logo_url),
-          innings (*)
+          innings (*),
+          match_squads (*)
         `)
         .or(`team1_id.eq.${id},team2_id.eq.${id}`)
         .order('match_date', { ascending: false })
@@ -284,12 +285,29 @@ export default function TeamProfile() {
             ) : matchHistory && matchHistory.length > 0 ? (
               <div className="space-y-4">
                 {matchHistory.map((match) => {
-                  const innings1 = match.innings?.find((i) => i.innings_number === 1)
-                  const innings2 = match.innings?.find((i) => i.innings_number === 2)
+                  const team1Innings = match.innings?.find((i) => i.batting_team_id === match.team1_id)
+                  const team2Innings = match.innings?.find((i) => i.batting_team_id === match.team2_id)
                   const isTeam1 = match.team1_id === id
                   const opponent = isTeam1 ? match.team2 : match.team1
                   const isWinner = match.winner_id === id
                   const isLoser = match.winner_id && match.winner_id !== id
+
+                  const getDynamicResultMargin = (m) => {
+                    if (!m.result_margin) return ''
+                    if (m.result_margin.toLowerCase().includes('won by 10 wickets')) {
+                      const inn2 = m.innings?.find((i) => i.innings_number === 2)
+                      if (inn2) {
+                        const battingSecondTeamPlayers = m.match_squads?.filter((s) => s.team_id === inn2.batting_team_id)
+                        if (battingSecondTeamPlayers && battingSecondTeamPlayers.length > 0 && battingSecondTeamPlayers.length < 11) {
+                          const totalWickets = battingSecondTeamPlayers.length - 1
+                          const wicketsRemaining = totalWickets - inn2.wickets
+                          const winningTeamName = inn2.batting_team_id === m.team1_id ? m.team1.name : m.team2.name
+                          return `${winningTeamName} won by ${wicketsRemaining} wickets`
+                        }
+                      }
+                    }
+                    return m.result_margin
+                  }
 
                   return (
                     <Link
@@ -318,15 +336,15 @@ export default function TeamProfile() {
                         </div>
 
                         {/* Innings score breakdown */}
-                        <div className="flex gap-4 text-xs text-slate-400 font-semibold">
-                          {innings1 && (
+                        <div className="flex gap-4 text-xs text-slate-400 font-semibold font-mono">
+                          {team1Innings && (
                             <span>
-                              {match.team1?.short_name}: <strong className="text-slate-250">{innings1.runs}/{innings1.wickets}</strong>
+                              {match.team1?.short_name}: <strong className="text-slate-200">{team1Innings.runs}/{team1Innings.wickets}</strong>
                             </span>
                           )}
-                          {innings2 && (
+                          {team2Innings && (
                             <span>
-                              {match.team2?.short_name}: <strong className="text-slate-250">{innings2.runs}/{innings2.wickets}</strong>
+                              {match.team2?.short_name}: <strong className="text-slate-200">{team2Innings.runs}/{team2Innings.wickets}</strong>
                             </span>
                           )}
                         </div>
@@ -352,7 +370,7 @@ export default function TeamProfile() {
                             </span>
                             {match.result_margin && (
                               <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">
-                                {match.result_margin}
+                                {getDynamicResultMargin(match)}
                               </p>
                             )}
                           </div>

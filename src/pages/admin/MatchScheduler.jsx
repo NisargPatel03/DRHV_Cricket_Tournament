@@ -16,7 +16,15 @@ export default function MatchScheduler() {
   }
 
   const [showAddForm, setShowAddForm] = useState(false)
+  const [showOptimiser, setShowOptimiser] = useState(false)
   const [editingMatch, setEditingMatch] = useState(null)
+
+  // Auto-Scheduler Optimiser states
+  const [optStartDate, setOptStartDate] = useState('')
+  const [optInterval, setOptInterval] = useState('2')
+  const [optOvers, setOptOvers] = useState('20')
+  const [optVenue, setOptVenue] = useState('DRHV Community Grounds')
+  const [optTime, setOptTime] = useState('14:00')
 
   // New Match Form states
   const [team1Id, setTeam1Id] = useState('')
@@ -171,6 +179,53 @@ export default function MatchScheduler() {
     })
   }
 
+  const handleAutoSchedule = async (e) => {
+    e.preventDefault()
+    if (!teams || teams.length < 2) {
+      showAlert('At least 2 approved teams are required to run the scheduler optimiser!', 'warning')
+      return
+    }
+    if (!optStartDate) {
+      showAlert('Please select a valid start date!', 'warning')
+      return
+    }
+
+    const pairings = []
+    for (let i = 0; i < teams.length; i++) {
+      for (let j = i + 1; j < teams.length; j++) {
+        pairings.push([teams[i], teams[j]])
+      }
+    }
+
+    let currentDate = new Date(optStartDate)
+    const matchesToInsert = pairings.map((pair, index) => {
+      if (index > 0) {
+        currentDate.setDate(currentDate.getDate() + parseInt(optInterval))
+      }
+      const dateString = currentDate.toISOString().split('T')[0]
+      return {
+        team1_id: pair[0].id,
+        team2_id: pair[1].id,
+        match_date: dateString,
+        match_time: optTime + ':00',
+        overs_limit: parseInt(optOvers),
+        venue: optVenue,
+        stage: 'league',
+        status: 'upcoming'
+      }
+    })
+
+    const { error } = await supabase.from('matches').insert(matchesToInsert)
+    if (error) {
+      showAlert(`Could not auto-schedule: ${error.message}`, 'error')
+    } else {
+      queryClient.invalidateQueries({ queryKey: ['admin_all_matches'] })
+      queryClient.invalidateQueries({ queryKey: ['admin_dashboard_metrics'] })
+      showAlert(`Successfully scheduled ${matchesToInsert.length} round-robin matches automatically!`, 'success')
+      setShowOptimiser(false)
+    }
+  }
+
   const getStatusBadge = (status) => {
     if (status === 'completed') {
       return (
@@ -238,13 +293,137 @@ export default function MatchScheduler() {
           <p className="text-slate-400 text-xs font-semibold">Configure match rules, stages, dates, and assign official scorers</p>
         </div>
 
-        <button
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider py-3 px-5 rounded-xl shadow shadow-emerald-500/10 flex items-center gap-1.5 transition-all"
-        >
-          <Plus className="w-4 h-4" /> Schedule New Match
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setShowOptimiser(!showOptimiser)
+              setShowAddForm(false)
+            }}
+            className="bg-slate-900 hover:bg-slate-850 text-slate-350 font-bold text-xs uppercase tracking-wider py-3 px-5 border border-white/10 rounded-xl shadow flex items-center gap-1.5 transition-all"
+          >
+            <CalendarDays className="w-4 h-4 text-cyan-400" /> Auto-Scheduler Optimiser
+          </button>
+          
+          <button
+            type="button"
+            onClick={() => {
+              setShowAddForm(!showAddForm)
+              setShowOptimiser(false)
+            }}
+            className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider py-3 px-5 rounded-xl shadow shadow-emerald-500/10 flex items-center gap-1.5 transition-all"
+          >
+            <Plus className="w-4 h-4" /> Schedule New Match
+          </button>
+        </div>
       </div>
+
+      {/* Auto-Scheduler Optimiser Panel */}
+      {showOptimiser && (
+        <form onSubmit={handleAutoSchedule} className="telemetry-card p-6 space-y-4 border border-cyan-500/20 shadow-[0_0_15px_rgba(6,182,212,0.03)] animate-scaleUp">
+          <div>
+            <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-widest flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-cyan-400" />
+              Round-Robin Tournament Auto-Scheduler Optimiser
+            </h2>
+            <p className="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mt-1">
+              Automatically schedules an optimized round-robin fixture matrix between all approved teams
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pt-2">
+            {/* Start Date */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                Tournament Start Date
+              </label>
+              <input
+                type="date"
+                required
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-cyan-500"
+                value={optStartDate}
+                onChange={(e) => setOptStartDate(e.target.value)}
+              />
+            </div>
+
+            {/* Match Interval */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                Fixture Interval (Days)
+              </label>
+              <input
+                type="number"
+                required
+                min={1}
+                max={14}
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-cyan-500"
+                value={optInterval}
+                onChange={(e) => setOptInterval(e.target.value)}
+              />
+            </div>
+
+            {/* Overs Limit */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                Match Overs Limit
+              </label>
+              <input
+                type="number"
+                required
+                min={1}
+                max={50}
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-cyan-500"
+                value={optOvers}
+                onChange={(e) => setOptOvers(e.target.value)}
+              />
+            </div>
+
+            {/* Match Time */}
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                Match Start Time
+              </label>
+              <input
+                type="time"
+                required
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-cyan-500"
+                value={optTime}
+                onChange={(e) => setOptTime(e.target.value)}
+              />
+            </div>
+
+            {/* Venue Location */}
+            <div className="sm:col-span-2">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                Match Venue Location
+              </label>
+              <input
+                type="text"
+                required
+                className="w-full bg-slate-950/60 border border-white/10 rounded-xl py-2.5 px-3 text-xs text-white focus:outline-none focus:border-cyan-500"
+                value={optVenue}
+                onChange={(e) => setOptVenue(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2 border-t border-white/5">
+            <button
+              type="button"
+              onClick={() => setShowOptimiser(false)}
+              className="bg-slate-900 hover:bg-slate-850 text-slate-400 border border-white/10 text-xs font-bold uppercase py-2 px-4 rounded-xl"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="bg-cyan-500 hover:bg-cyan-600 text-white text-xs font-bold uppercase py-2 px-5 rounded-xl shadow shadow-cyan-500/10"
+            >
+              Generate Optimized Fixtures
+            </button>
+          </div>
+        </form>
+      )}
 
       {/* Add Match Panel */}
       {showAddForm && (

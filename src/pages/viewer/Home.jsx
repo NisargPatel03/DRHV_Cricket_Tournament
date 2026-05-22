@@ -25,7 +25,8 @@ export default function Home() {
           *,
           team1:team1_id (name, short_name, logo_url),
           team2:team2_id (name, short_name, logo_url),
-          innings (*)
+          innings (*),
+          match_squads (*)
         `)
         .eq('status', 'live')
       if (error) throw error
@@ -104,7 +105,8 @@ export default function Home() {
           *,
           team1:team1_id (name, short_name, logo_url),
           team2:team2_id (name, short_name, logo_url),
-          innings (*)
+          innings (*),
+          match_squads (*)
         `)
         .eq('status', 'completed')
         .order('match_date', { ascending: false })
@@ -178,8 +180,8 @@ export default function Home() {
         ) : liveMatches && liveMatches.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {liveMatches.map((match) => {
-              const innings1 = match.innings?.find((i) => i.innings_number === 1)
-              const innings2 = match.innings?.find((i) => i.innings_number === 2)
+              const team1Innings = match.innings?.find((i) => i.batting_team_id === match.team1_id)
+              const team2Innings = match.innings?.find((i) => i.batting_team_id === match.team2_id)
 
               return (
                 <Link
@@ -210,11 +212,13 @@ export default function Home() {
                         </span>
                       </div>
                       <div className="text-right">
-                        {innings1 ? (
-                          <span className="font-black text-base text-white">
-                            {innings1.runs}/{innings1.wickets}
-                            <span className="text-xs text-slate-400 font-medium ml-1">
-                              ({Math.floor(innings1.total_balls / 6)}.{innings1.total_balls % 6} ov)
+                        {team1Innings ? (
+                          <span className="inline-flex items-center gap-1.5 bg-slate-950/60 border border-white/5 px-2.5 py-0.5 rounded-lg shadow-sm">
+                            <span className="font-black text-sm text-white">
+                              {team1Innings.runs}/{team1Innings.wickets}
+                            </span>
+                            <span className="text-[10px] text-emerald-400 font-extrabold font-mono">
+                              ({Math.floor(team1Innings.total_balls / 6)}.{team1Innings.total_balls % 6} ov)
                             </span>
                           </span>
                         ) : (
@@ -236,14 +240,16 @@ export default function Home() {
                         </span>
                       </div>
                       <div className="text-right">
-                        {innings2 ? (
-                          <span className="font-black text-base text-white">
-                            {innings2.runs}/{innings2.wickets}
-                            <span className="text-xs text-slate-400 font-medium ml-1">
-                              ({Math.floor(innings2.total_balls / 6)}.{innings2.total_balls % 6} ov)
+                        {team2Innings ? (
+                          <span className="inline-flex items-center gap-1.5 bg-slate-950/60 border border-white/5 px-2.5 py-0.5 rounded-lg shadow-sm">
+                            <span className="font-black text-sm text-white">
+                              {team2Innings.runs}/{team2Innings.wickets}
+                            </span>
+                            <span className="text-[10px] text-emerald-400 font-extrabold font-mono">
+                              ({Math.floor(team2Innings.total_balls / 6)}.{team2Innings.total_balls % 6} ov)
                             </span>
                           </span>
-                        ) : innings1 ? (
+                        ) : team1Innings ? (
                           <span className="text-xs text-emerald-450 font-bold uppercase tracking-wider bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/20">
                             Batting Next
                           </span>
@@ -517,8 +523,25 @@ export default function Home() {
         ) : completedMatches && completedMatches.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {completedMatches.map((match) => {
-              const innings1 = match.innings?.find((i) => i.innings_number === 1)
-              const innings2 = match.innings?.find((i) => i.innings_number === 2)
+              const team1Innings = match.innings?.find((i) => i.batting_team_id === match.team1_id)
+              const team2Innings = match.innings?.find((i) => i.batting_team_id === match.team2_id)
+
+              const getDynamicResultMargin = (m) => {
+                if (!m.result_margin) return 'Match Completed'
+                if (m.result_margin.toLowerCase().includes('won by 10 wickets')) {
+                  const inn2 = m.innings?.find((i) => i.innings_number === 2)
+                  if (inn2) {
+                    const battingSecondTeamPlayers = m.match_squads?.filter((s) => s.team_id === inn2.batting_team_id)
+                    if (battingSecondTeamPlayers && battingSecondTeamPlayers.length > 0 && battingSecondTeamPlayers.length < 11) {
+                      const totalWickets = battingSecondTeamPlayers.length - 1
+                      const wicketsRemaining = totalWickets - inn2.wickets
+                      const winningTeamName = inn2.batting_team_id === m.team1_id ? m.team1.name : m.team2.name
+                      return `${winningTeamName} won by ${wicketsRemaining} wickets`
+                    }
+                  }
+                }
+                return m.result_margin
+              }
 
               return (
                 <Link
@@ -531,18 +554,18 @@ export default function Home() {
                     <span>{formatDate(match.match_date)}</span>
                   </div>
 
-                  <div className="space-y-2 mb-3">
+                  <div className="space-y-2.5 mb-3">
                     {/* Team 1 */}
                     <div className="flex justify-between items-center text-xs">
                       <span className="font-extrabold text-slate-200">
                         {match.team1?.short_name}
                       </span>
-                      {innings1 ? (
-                        <span className="font-black text-white">
-                          {innings1.runs}/{innings1.wickets}
+                      {team1Innings ? (
+                        <span className="font-black text-white font-mono">
+                          {team1Innings.runs}/{team1Innings.wickets}
                         </span>
                       ) : (
-                        <span className="text-slate-600">-</span>
+                        <span className="text-slate-655 font-mono">-</span>
                       )}
                     </div>
 
@@ -551,19 +574,19 @@ export default function Home() {
                       <span className="font-extrabold text-slate-200">
                         {match.team2?.short_name}
                       </span>
-                      {innings2 ? (
-                        <span className="font-black text-white">
-                          {innings2.runs}/{innings2.wickets}
+                      {team2Innings ? (
+                        <span className="font-black text-white font-mono">
+                          {team2Innings.runs}/{team2Innings.wickets}
                         </span>
                       ) : (
-                        <span className="text-slate-600">-</span>
+                        <span className="text-slate-655 font-mono">-</span>
                       )}
                     </div>
                   </div>
 
                   {/* Result margin */}
                   <div className="text-[10px] text-emerald-450 font-black uppercase tracking-wider border-t border-white/5 pt-2.5">
-                    {match.result_margin || 'Match Completed'}
+                    {getDynamicResultMargin(match)}
                   </div>
                 </Link>
               )

@@ -36,6 +36,23 @@ export default function LiveScoring() {
   const [extraType, setExtraType] = useState('none') // 'none', 'wide', 'no_ball', 'bye', 'leg_bye'
   const [alertConfig, setAlertConfig] = useState(null) // { message, type }
 
+  // Interactive Wagon Wheel and Pitch Length coordinate states
+  const [wagonX, setWagonX] = useState(null)
+  const [wagonY, setWagonY] = useState(null)
+  const [pitchX, setPitchX] = useState(null)
+  const [pitchY, setPitchY] = useState(null)
+  const [channel, setChannel] = useState(null)
+
+  useEffect(() => {
+    if (!id) return
+    const ch = supabase.channel(`match-telemetry-${id}`)
+    ch.subscribe()
+    setChannel(ch)
+    return () => {
+      ch.unsubscribe()
+    }
+  }, [id])
+
   const showAlert = (message, type = 'info') => {
     setAlertConfig({ message, type })
     setTimeout(() => {
@@ -159,6 +176,25 @@ export default function LiveScoring() {
     const oversDecimal = currentFairBalls / 6
     return (currentInnings.runs / oversDecimal).toFixed(2)
   })()
+
+  // Auto conclude check on mount / data updates
+  useEffect(() => {
+    if (!match || !innings || !currentInnings) return
+    if (match.status !== 'live') return
+
+    const maxBalls = match.overs_limit * 6
+    const totalBattingPlayers = battingTeamPlayers?.length || 11
+    const allOut = currentInnings.wickets >= 10 || currentInnings.wickets >= (totalBattingPlayers - 1)
+    const oversFinished = currentInnings.total_balls >= maxBalls
+
+    const inn1 = innings?.find((i) => i.innings_number === 1)
+    const isChasingInnings2 = match.current_innings === 2
+    const targetReached = isChasingInnings2 && inn1 && currentInnings.runs > inn1.runs
+
+    if (allOut || oversFinished || targetReached) {
+      handleInningsEnd()
+    }
+  }, [match, innings, currentInnings, battingTeamPlayers])
 
   // 5. UPDATE INNINGS MUTATION
   const updateInningsMutation = useMutation({
@@ -295,7 +331,8 @@ export default function LiveScoring() {
       return {
         overComplete: currentFairDeliveriesInOver === 0 && ballsAdded === 1,
         wicketsCount: newWickets,
-        totalBallsCount: newTotalBalls
+        totalBallsCount: newTotalBalls,
+        runsCount: newRuns
       }
     },
     onSuccess: (result) => {
@@ -308,7 +345,12 @@ export default function LiveScoring() {
       const allOut = result.wicketsCount >= 10 || result.wicketsCount >= (totalBattingPlayers - 1)
       const oversFinished = result.totalBallsCount >= maxBalls
 
-      if (allOut || oversFinished) {
+      // Check if team batting second has reached their target score (first innings runs + 1)
+      const inn1 = innings?.find((i) => i.innings_number === 1)
+      const isChasingInnings2 = match.current_innings === 2
+      const targetReached = isChasingInnings2 && inn1 && result.runsCount > inn1.runs
+
+      if (allOut || oversFinished || targetReached) {
         handleInningsEnd()
       } else if (result.overComplete) {
         // Trigger bowler selection for next over!
@@ -380,6 +422,15 @@ export default function LiveScoring() {
   // 9. INNINGS COMPLETE AND CONCLUDE MATCH MUTATION
   const finishMatchMutation = useMutation({
     mutationFn: async ({ winnerId, margin, manOfMatchId }) => {
+      // 1. Mark Innings 2 as complete
+      if (currentInnings) {
+        await supabase
+          .from('innings')
+          .update({ is_complete: true })
+          .eq('id', currentInnings.id)
+      }
+
+      // 2. Set match status to completed
       const { error } = await supabase
         .from('matches')
         .update({
@@ -468,6 +519,56 @@ export default function LiveScoring() {
       is_wicket: false
     }
 
+    const strikerName = battingTeamPlayers?.find(p => p.id === currentInnings.striker_id)?.name || 'Striker'
+    const bowlerName = bowlingTeamPlayers?.find(p => p.id === currentInnings.bowler_id)?.name || 'Bowler'
+
+    if (channel) {
+      channel.send({
+        type: 'broadcast',
+        event: 'ball-telemetry',
+        payload: {
+          over_number: ballPayload.over_number,
+          ball_number: ballPayload.ball_number,
+          runs_batsman: runsBatsman,
+          runs_extras: runsExtras,
+          extra_type: extraType,
+          is_wicket: false,
+          wagon_x: wagonX,
+          wagon_y: wagonY,
+          pitch_x: pitchX,
+          pitch_y: pitchY,
+          batsman_name: strikerName,
+          bowler_name: bowlerName,
+          timestamp: Date.now()
+        }
+      })
+    }
+
+    try {
+      const localKey = `wagon_pitch_telemetry_${id}`
+      const existing = JSON.parse(localStorage.getItem(localKey) || '[]')
+      existing.push({
+        over_number: ballPayload.over_number,
+        ball_number: ballPayload.ball_number,
+        runs_batsman: runsBatsman,
+        runs_extras: runsExtras,
+        extra_type: extraType,
+        is_wicket: false,
+        wagon_x: wagonX,
+        wagon_y: wagonY,
+        pitch_x: pitchX,
+        pitch_y: pitchY
+      })
+      localStorage.setItem(localKey, JSON.stringify(existing))
+    } catch (e) {
+      console.error(e)
+    }
+
+    setWagonX(null)
+    setWagonY(null)
+    setPitchX(null)
+    setPitchY(null)
+
     recordBallMutation.mutate(ballPayload)
     setExtraType('none') // Reset extras toggle
   }
@@ -492,6 +593,58 @@ export default function LiveScoring() {
       wicket_player_id: outBatsmanId,
       fielder_id: fielderId || null
     }
+
+    const strikerName = battingTeamPlayers?.find(p => p.id === currentInnings.striker_id)?.name || 'Striker'
+    const bowlerName = bowlingTeamPlayers?.find(p => p.id === currentInnings.bowler_id)?.name || 'Bowler'
+
+    if (channel) {
+      channel.send({
+        type: 'broadcast',
+        event: 'ball-telemetry',
+        payload: {
+          over_number: ballPayload.over_number,
+          ball_number: ballPayload.ball_number,
+          runs_batsman: 0,
+          runs_extras: 0,
+          extra_type: 'none',
+          is_wicket: true,
+          wicket_type: wicketType,
+          wagon_x: wagonX,
+          wagon_y: wagonY,
+          pitch_x: pitchX,
+          pitch_y: pitchY,
+          batsman_name: strikerName,
+          bowler_name: bowlerName,
+          timestamp: Date.now()
+        }
+      })
+    }
+
+    try {
+      const localKey = `wagon_pitch_telemetry_${id}`
+      const existing = JSON.parse(localStorage.getItem(localKey) || '[]')
+      existing.push({
+        over_number: ballPayload.over_number,
+        ball_number: ballPayload.ball_number,
+        runs_batsman: 0,
+        runs_extras: 0,
+        extra_type: 'none',
+        is_wicket: true,
+        wicket_type: wicketType,
+        wagon_x: wagonX,
+        wagon_y: wagonY,
+        pitch_x: pitchX,
+        pitch_y: pitchY
+      })
+      localStorage.setItem(localKey, JSON.stringify(existing))
+    } catch (e) {
+      console.error(e)
+    }
+
+    setWagonX(null)
+    setWagonY(null)
+    setPitchX(null)
+    setPitchY(null)
 
     recordBallMutation.mutate(ballPayload)
     setShowWicketModal(false)
@@ -583,7 +736,9 @@ export default function LiveScoring() {
     if (inn2.runs > inn1.runs) {
       // Batting second team wins
       winnerId = inn2.batting_team_id
-      const wicketsRemaining = 10 - inn2.wickets
+      const battingSecondTeamPlayers = inn2.batting_team_id === match.team1_id ? team1Players : team2Players
+      const totalWickets = (battingSecondTeamPlayers && battingSecondTeamPlayers.length > 0) ? (battingSecondTeamPlayers.length - 1) : 10
+      const wicketsRemaining = totalWickets - inn2.wickets
       const winningTeamName = winnerId === match.team1_id ? match.team1.name : match.team2.name
       margin = `${winningTeamName} won by ${wicketsRemaining} wickets`
     } else if (inn1.runs > inn2.runs) {
@@ -1098,6 +1253,112 @@ alter table public.innings add column if not exists bowler_id uuid references pu
               </button>
             )
           })}
+        </div>
+
+        {/* Dynamic Skeuomorphic Wagon Wheel & Pitch Tap Selector */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#080d16] border-2 border-black p-5 shadow-[4px_4px_0_#000]">
+          {/* Column 1: Wagon Wheel Map Selector */}
+          <div className="flex flex-col items-center space-y-3">
+            <div className="text-center w-full border-b border-white/5 pb-2">
+              <span className="text-[10px] text-cyan-400 font-black uppercase tracking-wider block font-mono">
+                Option C: Interactive SVG Wagon Wheel
+              </span>
+              <p className="text-[9px] text-slate-400 font-mono mt-0.5 uppercase">
+                Tap inside the field to mark hit direction coordinates
+              </p>
+            </div>
+
+            <div
+              className="relative w-48 h-48 rounded-full bg-emerald-950/40 border-4 border-emerald-500/20 overflow-hidden cursor-crosshair flex items-center justify-center shadow-inner"
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect()
+                const x = Math.round(((e.clientX - rect.left) / rect.width) * 100)
+                const y = Math.round(((e.clientY - rect.top) / rect.height) * 100)
+                setWagonX(x)
+                setWagonY(y)
+              }}
+            >
+              {/* Cricket boundary markings */}
+              <div className="absolute inset-2 rounded-full border border-dashed border-emerald-500/10" />
+              <div className="absolute inset-8 rounded-full border border-dashed border-emerald-500/10" />
+              <div className="absolute w-[2px] h-full bg-emerald-500/5 left-1/2 -translate-x-1/2" />
+              <div className="absolute h-[2px] w-full bg-emerald-500/5 top-1/2 -translate-y-1/2" />
+              
+              {/* Pitch in the middle */}
+              <div className="absolute w-2 h-8 bg-amber-500/10 border border-amber-500/20" />
+
+              {/* Sectors text indicators */}
+              <span className="absolute top-2 text-[7px] text-slate-500 font-black font-mono">STRAIGHT</span>
+              <span className="absolute bottom-2 text-[7px] text-slate-500 font-black font-mono">FINE LEG</span>
+              <span className="absolute left-2 text-[7px] text-slate-500 font-black font-mono">OFF</span>
+              <span className="absolute right-2 text-[7px] text-slate-500 font-black font-mono">LEG</span>
+
+              {/* Glowing tap coordinate indicator */}
+              {wagonX !== null && wagonY !== null && (
+                <div
+                  className="absolute w-3.5 h-3.5 bg-cyan-400 border border-white rounded-full shadow-[0_0_10px_#22d3ee] -translate-x-1/2 -translate-y-1/2 animate-ping z-10"
+                  style={{ left: `${wagonX}%`, top: `${wagonY}%` }}
+                />
+              )}
+            </div>
+
+            {wagonX !== null && (
+              <span className="text-[9px] text-cyan-400 font-bold font-mono uppercase bg-slate-900 border border-white/10 px-2 py-0.5 rounded">
+                Wagon Coordinate: ({wagonX}%, {wagonY}%)
+              </span>
+            )}
+          </div>
+
+          {/* Column 2: 2D Pitch length Selector */}
+          <div className="flex flex-col items-center space-y-3">
+            <div className="text-center w-full border-b border-white/5 pb-2">
+              <span className="text-[10px] text-purple-400 font-black uppercase tracking-wider block font-mono">
+                Option D: 2D Pitch Bounce Selector
+              </span>
+              <p className="text-[9px] text-slate-400 font-mono mt-0.5 uppercase">
+                Tap pitch grid to record delivery length coordinate
+              </p>
+            </div>
+
+            <div
+              className="relative w-28 h-48 bg-amber-950/20 border-2 border-amber-500/20 cursor-crosshair flex flex-col justify-between shadow-inner"
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect()
+                const x = Math.round(((e.clientX - rect.left) / rect.width) * 100)
+                const y = Math.round(((e.clientY - rect.top) / rect.height) * 100)
+                setPitchX(x)
+                setPitchY(y)
+              }}
+            >
+              {/* Length zone lines */}
+              <div className="h-[25%] border-b border-purple-500/10 flex items-center justify-center bg-purple-950/5">
+                <span className="text-[6px] text-purple-450 uppercase font-black font-mono">Yorker / Full</span>
+              </div>
+              <div className="h-[25%] border-b border-purple-500/10 flex items-center justify-center bg-blue-950/5">
+                <span className="text-[6px] text-blue-400 uppercase font-black font-mono">Good Length</span>
+              </div>
+              <div className="h-[25%] border-b border-purple-500/10 flex items-center justify-center bg-amber-950/5">
+                <span className="text-[6px] text-amber-550 uppercase font-black font-mono">Short Length</span>
+              </div>
+              <div className="h-[25%] flex items-center justify-center bg-red-950/5">
+                <span className="text-[6px] text-red-400 uppercase font-black font-mono">Bouncer / Back</span>
+              </div>
+
+              {/* Glowing bounce dot */}
+              {pitchX !== null && pitchY !== null && (
+                <div
+                  className="absolute w-3.5 h-3.5 bg-purple-400 border border-white rounded-full shadow-[0_0_10px_#a855f7] -translate-x-1/2 -translate-y-1/2 animate-ping z-10"
+                  style={{ left: `${pitchX}%`, top: `${pitchY}%` }}
+                />
+              )}
+            </div>
+
+            {pitchX !== null && (
+              <span className="text-[9px] text-purple-400 font-bold font-mono uppercase bg-slate-900 border border-white/10 px-2 py-0.5 rounded">
+                Bounce Coordinate: ({pitchX}%, {pitchY}%)
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Standard Runs Button grid (Larger sized buttons for field use!) */}

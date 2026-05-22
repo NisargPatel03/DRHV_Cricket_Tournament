@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
+import { supabase } from '../lib/supabase'
 import { LayoutDashboard, Users, Calendar, Image, Settings, LogOut, ShieldAlert, Menu, X, ArrowLeft, Shield } from 'lucide-react'
 
 export default function AdminLayout() {
@@ -8,6 +9,36 @@ export default function AdminLayout() {
   const navigate = useNavigate()
   const { user, profile, logout } = useAuthStore()
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+
+  const [latency, setLatency] = useState(0)
+  const [telemetryStatus, setTelemetryStatus] = useState('CONNECTING')
+
+  useEffect(() => {
+    let active = true
+    const checkLatency = async () => {
+      const start = performance.now()
+      try {
+        const { error } = await supabase.from('matches').select('id').limit(1)
+        if (error) throw error
+        const end = performance.now()
+        if (active) {
+          setLatency(Math.round(end - start))
+          setTelemetryStatus('CONNECTED')
+        }
+      } catch (err) {
+        if (active) {
+          setTelemetryStatus('DISCONNECTED')
+        }
+      }
+    }
+    
+    checkLatency()
+    const timer = setInterval(checkLatency, 8000)
+    return () => {
+      active = false
+      clearInterval(timer)
+    }
+  }, [])
 
   const adminMenu = [
     { label: 'Dashboard', path: '/admin', icon: LayoutDashboard },
@@ -78,7 +109,43 @@ export default function AdminLayout() {
             )
           })}
         </nav>
- 
+
+        {/* Dynamic Skeuomorphic Latency & Web Telemetry Panel */}
+        <div className="mx-4 mb-6 p-4 bg-slate-950/80 border border-white/5 rounded-2xl space-y-3.5 shadow-inner">
+          <div className="flex justify-between items-center border-b border-white/5 pb-2">
+            <span className="text-[8px] text-slate-500 font-black uppercase tracking-widest">System Latency</span>
+            <span className="flex items-center gap-1.5 text-[8px] text-slate-400 font-extrabold uppercase">
+              <span className={`w-1.5 h-1.5 rounded-full ${
+                telemetryStatus === 'CONNECTED' ? 'bg-cyan-500 animate-pulse' :
+                telemetryStatus === 'CONNECTING' ? 'bg-amber-500 animate-pulse' : 'bg-red-500'
+              }`} />
+              {telemetryStatus}
+            </span>
+          </div>
+
+          <div className="flex items-baseline justify-between">
+            <div className="text-xl font-black text-white tracking-tight monospace font-mono">
+              {telemetryStatus === 'CONNECTED' ? `${latency}` : '---'} <span className="text-[9px] text-slate-500 uppercase">ms</span>
+            </div>
+            {/* Visual signal bars */}
+            <div className="flex gap-0.5 h-3 items-end">
+              <div className={`w-1 h-1.5 rounded-sm ${latency > 0 && latency < 500 ? (latency < 100 ? 'bg-emerald-450' : 'bg-amber-500') : 'bg-slate-800'}`} />
+              <div className={`w-1 h-2.5 rounded-sm ${latency > 0 && latency < 300 ? (latency < 100 ? 'bg-emerald-450' : 'bg-amber-500') : 'bg-slate-800'}`} />
+              <div className={`w-1 h-3.5 rounded-sm ${latency > 0 && latency < 100 ? 'bg-emerald-450' : 'bg-slate-800'}`} />
+            </div>
+          </div>
+
+          {/* Progress gauge dial simulation */}
+          <div className="w-full bg-slate-900 border border-white/5 h-1.5 rounded-full overflow-hidden">
+            <div
+              className={`h-full transition-all duration-500 ${
+                latency < 100 ? 'bg-cyan-500' : latency < 300 ? 'bg-amber-500' : 'bg-red-500'
+              }`}
+              style={{ width: `${Math.min(100, Math.max(10, latency > 0 ? (350 - latency) / 3 : 0))}%` }}
+            />
+          </div>
+        </div>
+
         {/* Sidebar Footer */}
         <div className="p-4 border-t border-white/10 space-y-3">
           <div className="flex items-center gap-3 px-2">

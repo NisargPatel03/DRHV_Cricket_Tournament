@@ -32,7 +32,8 @@ export default function Fixtures() {
           *,
           team1:team1_id (id, name, short_name, logo_url),
           team2:team2_id (id, name, short_name, logo_url),
-          innings (*)
+          innings (*),
+          match_squads (*)
         `)
         .order('match_date', { ascending: true })
         .order('match_time', { ascending: true })
@@ -72,8 +73,25 @@ export default function Fixtures() {
   }
 
   const renderMatchCard = (match) => {
-    const innings1 = match.innings?.find((i) => i.innings_number === 1)
-    const innings2 = match.innings?.find((i) => i.innings_number === 2)
+    const team1Innings = match.innings?.find((i) => i.batting_team_id === match.team1_id)
+    const team2Innings = match.innings?.find((i) => i.batting_team_id === match.team2_id)
+
+    const getDynamicResultMargin = (m) => {
+      if (!m.result_margin) return ''
+      if (m.result_margin.toLowerCase().includes('won by 10 wickets')) {
+        const inn2 = m.innings?.find((i) => i.innings_number === 2)
+        if (inn2) {
+          const battingSecondTeamPlayers = m.match_squads?.filter((s) => s.team_id === inn2.batting_team_id)
+          if (battingSecondTeamPlayers && battingSecondTeamPlayers.length > 0 && battingSecondTeamPlayers.length < 11) {
+            const totalWickets = battingSecondTeamPlayers.length - 1
+            const wicketsRemaining = totalWickets - inn2.wickets
+            const winningTeamName = inn2.batting_team_id === m.team1_id ? m.team1.name : m.team2.name
+            return `${winningTeamName} won by ${wicketsRemaining} wickets`
+          }
+        }
+      }
+      return m.result_margin
+    }
 
     return (
       <Link
@@ -118,11 +136,13 @@ export default function Fixtures() {
               <span className="font-extrabold text-sm text-slate-200 group-hover:text-white transition-colors">
                 {match.team1?.name}
               </span>
-              {innings1 && (
-                <span className="font-black text-xs text-white ml-auto">
-                  {innings1.runs}/{innings1.wickets}
-                  <span className="text-[10px] text-slate-405 font-bold ml-1">
-                    ({Math.floor(innings1.total_balls / 6)}.{innings1.total_balls % 6} ov)
+              {team1Innings && (
+                <span className="inline-flex items-center gap-1.5 ml-auto bg-slate-950/60 border border-white/5 px-2.5 py-0.5 rounded-lg shadow-sm">
+                  <span className="font-black text-xs text-white">
+                    {team1Innings.runs}/{team1Innings.wickets}
+                  </span>
+                  <span className="text-[9px] text-emerald-400 font-extrabold font-mono">
+                    ({Math.floor(team1Innings.total_balls / 6)}.{team1Innings.total_balls % 6} ov)
                   </span>
                 </span>
               )}
@@ -138,11 +158,13 @@ export default function Fixtures() {
               <span className="font-extrabold text-sm text-slate-200 group-hover:text-white transition-colors">
                 {match.team2?.name}
               </span>
-              {innings2 && (
-                <span className="font-black text-xs text-white ml-auto">
-                  {innings2.runs}/{innings2.wickets}
-                  <span className="text-[10px] text-slate-405 font-bold ml-1">
-                    ({Math.floor(innings2.total_balls / 6)}.{innings2.total_balls % 6} ov)
+              {team2Innings && (
+                <span className="inline-flex items-center gap-1.5 ml-auto bg-slate-950/60 border border-white/5 px-2.5 py-0.5 rounded-lg shadow-sm">
+                  <span className="font-black text-xs text-white">
+                    {team2Innings.runs}/{team2Innings.wickets}
+                  </span>
+                  <span className="text-[9px] text-emerald-400 font-extrabold font-mono">
+                    ({Math.floor(team2Innings.total_balls / 6)}.{team2Innings.total_balls % 6} ov)
                   </span>
                 </span>
               )}
@@ -163,7 +185,7 @@ export default function Fixtures() {
               </div>
               {match.result_margin && (
                 <p className="text-[10px] text-emerald-450 font-black uppercase mt-1.5 tracking-wider">
-                  {match.result_margin}
+                  {getDynamicResultMargin(match)}
                 </p>
               )}
             </div>

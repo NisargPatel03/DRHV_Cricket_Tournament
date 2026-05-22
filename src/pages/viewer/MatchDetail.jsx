@@ -18,6 +18,11 @@ export default function MatchDetail() {
   const [chatInput, setChatInput] = useState('')
   const chatChannelRef = useRef(null)
 
+  // Crowd Hype Meter States
+  const [team1Hype, setTeam1Hype] = useState(50)
+  const [team2Hype, setTeam2Hype] = useState(50)
+
+
   // 5B. Fetch Fan Chats
   const { data: initialChats } = useQuery({
     queryKey: ['match_fan_chats', id],
@@ -344,6 +349,34 @@ export default function MatchDetail() {
     enabled: !!match
   })
 
+  // Crowd Hype Meter decay and triggers
+  useEffect(() => {
+    if (!match || match.status !== 'live') return
+    const interval = setInterval(() => {
+      setTeam1Hype((prev) => Math.max(prev - 2, 10))
+      setTeam2Hype((prev) => Math.max(prev - 2, 10))
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [match])
+
+  const handleSendCheer = (teamNum) => {
+    if (teamNum === 1) {
+      setTeam1Hype((prev) => Math.min(prev + 8, 100))
+      playSynthesizedSound('whistle')
+    } else {
+      setTeam2Hype((prev) => Math.min(prev + 8, 100))
+      playSynthesizedSound('horn')
+    }
+
+    if (chatChannelRef.current) {
+      chatChannelRef.current.send({
+        type: 'broadcast',
+        event: 'cheer',
+        payload: { team: teamNum }
+      })
+    }
+  }
+
   // Realtime Postgres Change Listening on balls & chats
   useEffect(() => {
     if (!id) return
@@ -433,13 +466,112 @@ export default function MatchDetail() {
           })
         }
       )
+      .on(
+        'broadcast',
+        { event: 'ball-telemetry' },
+        (payload) => {
+          const item = payload.payload
+          setTelemetryMap((prev) => {
+            const next = {
+              ...prev,
+              [`${item.over_number}-${item.ball_number}`]: {
+                wagon_x: item.wagon_x,
+                wagon_y: item.wagon_y,
+                pitch_x: item.pitch_x,
+                pitch_y: item.pitch_y
+              }
+            }
+            try {
+              const localKey = `wagon_pitch_telemetry_${id}`
+              const list = Object.entries(next).map(([key, val]) => {
+                const [over, ball] = key.split('-').map(Number)
+                return {
+                  over_number: over,
+                  ball_number: ball,
+                  wagon_x: val.wagon_x,
+                  wagon_y: val.wagon_y,
+                  pitch_x: val.pitch_x,
+                  pitch_y: val.pitch_y
+                }
+              })
+              localStorage.setItem(localKey, JSON.stringify(list))
+            } catch (e) {
+              console.error(e)
+            }
+            return next
+          })
+        }
+      )
+      .on(
+        'broadcast',
+        { event: 'request_telemetry_sync' },
+        () => {
+          setTelemetryMap((currentMap) => {
+            if (Object.keys(currentMap).length > 0 && chatChannelRef.current) {
+              chatChannelRef.current.send({
+                type: 'broadcast',
+                event: 'sync_telemetry_response',
+                payload: { telemetry: currentMap }
+              })
+            }
+            return currentMap
+          })
+        }
+      )
+      .on(
+        'broadcast',
+        { event: 'sync_telemetry_response' },
+        (payload) => {
+          const incoming = payload.payload?.telemetry || {}
+          setTelemetryMap((prev) => {
+            const merged = { ...prev, ...incoming }
+            try {
+              const localKey = `wagon_pitch_telemetry_${id}`
+              const list = Object.entries(merged).map(([key, val]) => {
+                const [over, ball] = key.split('-').map(Number)
+                return {
+                  over_number: over,
+                  ball_number: ball,
+                  wagon_x: val.wagon_x,
+                  wagon_y: val.wagon_y,
+                  pitch_x: val.pitch_x,
+                  pitch_y: val.pitch_y
+                }
+              })
+              localStorage.setItem(localKey, JSON.stringify(list))
+            } catch (e) {
+              console.error(e)
+            }
+            return merged
+          })
+        }
+      )
+      .on(
+        'broadcast',
+        { event: 'cheer' },
+        (payload) => {
+          const { team } = payload.payload
+          if (team === 1) {
+            setTeam1Hype((prev) => Math.min(prev + 8, 100))
+            playSynthesizedSound('whistle')
+          } else if (team === 2) {
+            setTeam2Hype((prev) => Math.min(prev + 8, 100))
+            playSynthesizedSound('horn')
+          }
+        }
+      )
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-          // Once successfully subscribed, request existing chat messages from any open screens
+          // Once successfully subscribed, request existing chat and telemetry messages from any open screens
           setTimeout(() => {
             channel.send({
               type: 'broadcast',
               event: 'request_sync',
+              payload: {}
+            })
+            channel.send({
+              type: 'broadcast',
+              event: 'request_telemetry_sync',
               payload: {}
             })
           }, 300)
@@ -476,6 +608,12 @@ export default function MatchDetail() {
   const currentBalls = balls?.filter((b) => b.innings_id === currentInnings?.id) || []
   const inn1Balls = balls?.filter((b) => b.innings_id === innings1?.id) || []
   const inn2Balls = balls?.filter((b) => b.innings_id === innings2?.id) || []
+
+  // Map innings and balls dynamically by team ID
+  const team1Innings = innings?.find((i) => i.batting_team_id === match.team1_id)
+  const team2Innings = innings?.find((i) => i.batting_team_id === match.team2_id)
+  const team1Balls = balls?.filter((b) => b.innings_id === team1Innings?.id) || []
+  const team2Balls = balls?.filter((b) => b.innings_id === team2Innings?.id) || []
 
   // Fair balls count
   const getFairBallsCount = (ballList) => {
@@ -527,14 +665,17 @@ export default function MatchDetail() {
       return { team1: 50, team2: 50 }
     }
 
-    // Default base probabilities
-    let prob1 = 50
+    // Determine chasing and defending teams dynamically
+    const chasingTeamId = innings2?.batting_team_id || (innings1?.batting_team_id === match.team1_id ? match.team2_id : match.team1_id)
+    
+    let chaseProb = 50
     
     if (match.current_innings === 1) {
       if (innings1) {
         const rr = parseFloat(calculateRunRate(innings1.runs, inn1Balls))
         const wkts = innings1.wickets
-        prob1 = Math.min(Math.max(50 + (rr - 7.5) * 8 - wkts * 3, 20), 80)
+        const defendProb = Math.min(Math.max(50 + (rr - 7.5) * 8 - wkts * 3, 20), 80)
+        chaseProb = 100 - defendProb
       }
     } else if (match.current_innings === 2 && innings1) {
       const target = innings1.runs + 1
@@ -545,24 +686,28 @@ export default function MatchDetail() {
       const ballsRemaining = totalMaxBalls - fairBallsBowled
       
       if (runsNeeded <= 0) {
-        prob1 = 0
+        chaseProb = 100
       } else if (ballsRemaining <= 0 || (innings2?.wickets || 0) >= 10) {
-        prob1 = 100
+        chaseProb = 0
       } else {
         const reqRR = (runsNeeded * 6) / ballsRemaining
         const curRR = parseFloat(calculateRunRate(innings2?.runs || 0, inn2Balls)) || 6.0
         const wicketsLeft = 10 - (innings2?.wickets || 0)
         
         const rateDiff = reqRR - curRR
-        prob1 = 50 + rateDiff * 10 - wicketsLeft * 4
-        prob1 = Math.min(Math.max(prob1, 5), 95)
+        // More required run rate reduces chasing chance; more wickets remaining increases chasing chance
+        chaseProb = 50 - rateDiff * 10 + wicketsLeft * 4
+        chaseProb = Math.min(Math.max(chaseProb, 5), 95)
       }
     }
 
-    prob1 = Math.round(prob1)
+    const isTeam1Chasing = chasingTeamId === match.team1_id
+    const prob1 = isTeam1Chasing ? chaseProb : (100 - chaseProb)
+    const prob2 = isTeam1Chasing ? (100 - chaseProb) : chaseProb
+
     return {
-      team1: prob1,
-      team2: 100 - prob1
+      team1: Math.round(prob1),
+      team2: Math.round(prob2)
     }
   }
 
@@ -571,9 +716,12 @@ export default function MatchDetail() {
   // Active batter stats computation
   const getBatsmanListStats = (ballList, battingTeamId) => {
     const batters = {}
-    const playersInTeam = (squads || []).filter((s) => s.team_id === battingTeamId).map((s) => s.player)
+    const playersInTeam = (squads || [])
+      .filter((s) => s.team_id === battingTeamId && s.player)
+      .map((s) => s.player)
 
     playersInTeam.forEach((p) => {
+      if (!p || !p.id) return
       batters[p.id] = {
         id: p.id,
         name: p.name,
@@ -626,9 +774,12 @@ export default function MatchDetail() {
   // Active Bowlers list computation
   const getBowlerListStats = (ballList, bowlingTeamId) => {
     const bowlers = {}
-    const playersInTeam = (squads || []).filter((s) => s.team_id === bowlingTeamId).map((s) => s.player)
+    const playersInTeam = (squads || [])
+      .filter((s) => s.team_id === bowlingTeamId && s.player)
+      .map((s) => s.player)
 
     playersInTeam.forEach((p) => {
+      if (!p || !p.id) return
       bowlers[p.id] = {
         id: p.id,
         name: p.name,
@@ -712,12 +863,17 @@ export default function MatchDetail() {
       if (b.is_wicket && b.wicket_type !== 'retired_hurt') {
         wicketsCount += 1
         const over = `${Math.floor(fairBalls / 6)}.${fairBalls % 6}`
+
+        // Find dismissed batsman name from squads playing XI
+        const playerObj = squads?.find((s) => s.player_id === b.wicket_player_id)?.player
+        const batsmanName = playerObj?.name || (b.wicket_player_id === b.batsman_id ? b.batsman?.name : b.non_striker_id === b.wicket_player_id ? 'Non Striker' : 'Batsman')
+
         wickets.push({
           number: wicketsCount,
           score: cumulativeRuns,
           balls: fairBalls,
           over,
-          batsmanName: b.wicket_player_id === b.batsman_id ? b.batsman?.name : b.non_striker_id === b.wicket_player_id ? 'Non Striker' : 'Batsman'
+          batsmanName
         })
       }
     })
@@ -726,6 +882,8 @@ export default function MatchDetail() {
   }
 
   const currentFOW = currentInnings ? getFallOfWickets(currentBalls, currentInnings.batting_team_id) : []
+  const inn1FOW = innings1 ? getFallOfWickets(inn1Balls, innings1.batting_team_id) : []
+  const inn2FOW = innings2 ? getFallOfWickets(inn2Balls, innings2.batting_team_id) : []
 
   // Dynamic Commentary Feed generation
   const generateCommentaryFeed = () => {
@@ -809,6 +967,24 @@ export default function MatchDetail() {
 
   const recentOverBalls = getRecentBalls()
 
+  // Dynamic result margin helper
+  const getDynamicResultMargin = () => {
+    if (!match?.result_margin) return 'Match Concluded Successfully'
+    if (match.result_margin.toLowerCase().includes('won by 10 wickets')) {
+      const inn2 = innings?.find((i) => i.innings_number === 2)
+      if (inn2) {
+        const battingSecondTeamPlayers = squads?.filter((s) => s.team_id === inn2.batting_team_id)
+        if (battingSecondTeamPlayers && battingSecondTeamPlayers.length > 0 && battingSecondTeamPlayers.length < 11) {
+          const totalWickets = battingSecondTeamPlayers.length - 1
+          const wicketsRemaining = totalWickets - inn2.wickets
+          const winningTeamName = inn2.batting_team_id === match.team1_id ? match.team1?.name : match.team2?.name
+          return `${winningTeamName} won by ${wicketsRemaining} wickets`
+        }
+      }
+    }
+    return match.result_margin
+  }
+
   return (
     <div className="space-y-8">
       {/* Back Button */}
@@ -846,15 +1022,19 @@ export default function MatchDetail() {
               <span className="text-[10px] text-slate-500 font-black uppercase mt-0.5 tracking-widest block">
                 {match.team1?.short_name}
               </span>
-              {innings1 ? (
-                <div className="mt-2 flex items-baseline gap-1.5">
-                  <span className="text-xl md:text-2xl font-black text-white">{innings1.runs}/{innings1.wickets}</span>
-                  <span className="text-xs text-slate-400 font-bold tracking-wider">
-                    ({getOversString(inn1Balls)} ov)
+              {team1Innings ? (
+                <div className="mt-2.5 flex items-baseline gap-2 bg-slate-950/60 border border-white/5 px-3 py-1.5 rounded-xl font-mono shadow-sm w-fit">
+                  <span className="text-xl md:text-2xl font-black text-white">{team1Innings.runs}/{team1Innings.wickets}</span>
+                  <span className="text-[10px] text-emerald-400 font-extrabold tracking-wider uppercase font-sans">
+                    ({getOversString(team1Balls)} ov)
                   </span>
                 </div>
+              ) : innings1 ? (
+                <span className="text-xs text-emerald-450 font-black bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-lg block mt-2.5 uppercase tracking-wider animate-pulse">
+                  Batting Next
+                </span>
               ) : (
-                <span className="text-xs text-slate-500 italic block mt-2">Yet to bat</span>
+                <span className="text-xs text-slate-500 italic block mt-2.5">Yet to bat</span>
               )}
             </div>
           </div>
@@ -879,19 +1059,19 @@ export default function MatchDetail() {
               <span className="text-[10px] text-slate-500 font-black uppercase mt-0.5 tracking-widest block">
                 {match.team2?.short_name}
               </span>
-              {innings2 ? (
-                <div className="mt-2 flex items-baseline gap-1.5 justify-end">
-                  <span className="text-xl md:text-2xl font-black text-white">{innings2.runs}/{innings2.wickets}</span>
-                  <span className="text-xs text-slate-400 font-bold tracking-wider">
-                    ({getOversString(inn2Balls)} ov)
+              {team2Innings ? (
+                <div className="mt-2.5 flex items-baseline gap-2 bg-slate-950/60 border border-white/5 px-3 py-1.5 rounded-xl font-mono shadow-sm w-fit md:ml-auto">
+                  <span className="text-xl md:text-2xl font-black text-white">{team2Innings.runs}/{team2Innings.wickets}</span>
+                  <span className="text-[10px] text-emerald-400 font-extrabold tracking-wider uppercase font-sans">
+                    ({getOversString(team2Balls)} ov)
                   </span>
                 </div>
               ) : innings1 ? (
-                <span className="text-xs text-emerald-450 font-black bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-lg block mt-2 uppercase tracking-wider animate-pulse">
+                <span className="text-xs text-emerald-450 font-black bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-lg block mt-2.5 uppercase tracking-wider animate-pulse text-right">
                   Batting Next
                 </span>
               ) : (
-                <span className="text-xs text-slate-500 italic block mt-2">Yet to bat</span>
+                <span className="text-xs text-slate-500 italic block mt-2.5">Yet to bat</span>
               )}
             </div>
           </div>
@@ -901,7 +1081,7 @@ export default function MatchDetail() {
         {match.status === 'completed' && (
           <div className="bg-emerald-500/[0.03] border-t border-white/5 px-6 py-4 text-center">
             <h3 className="text-emerald-450 font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2">
-              🏆 {match.result_margin || 'Match Concluded Successfully'}
+              🏆 {getDynamicResultMargin()}
             </h3>
             {match.man_of_the_match && (
               <p className="text-slate-400 text-xs mt-1.5 font-semibold">
@@ -1007,6 +1187,80 @@ export default function MatchDetail() {
         </section>
       )}
 
+      {/* 2.5 CROWD HYPE METER PANEL */}
+      {match.status === 'live' && (
+        <section className="bg-[#05080e]/60 border-2 border-slate-950 p-5 rounded-2xl shadow-xl space-y-4 relative overflow-hidden">
+          {/* Subtle neon pulse background */}
+          <div className="absolute top-0 right-0 w-24 h-24 bg-rose-500/5 rounded-full blur-2xl animate-pulse" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-cyan-500/5 rounded-full blur-2xl animate-pulse" />
+
+          {/* Heading */}
+          <div className="flex justify-between items-center border-b border-white/5 pb-2.5">
+            <div>
+              <span className="text-[10px] text-rose-450 font-black uppercase tracking-widest font-mono block">
+                Option F: Interactive Crowd Hype Meter
+              </span>
+              <p className="text-[9px] text-slate-400 font-semibold mt-0.5 uppercase tracking-wide">
+                Tap to cheer for your team! Everyone in the arena hears it in real-time
+              </p>
+            </div>
+            <span className="flex items-center gap-1 text-[9px] text-slate-500 font-black font-mono uppercase bg-slate-900 border border-white/5 px-2 py-0.5 rounded">
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping" /> Live Arena
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Team 1 Hype Box */}
+            <div className="space-y-2 bg-slate-950/40 p-4 rounded-xl border border-white/5">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-black text-rose-400 font-mono tracking-wider">
+                  {match.team1?.short_name} Hype
+                </span>
+                <span className="text-xs font-black text-white font-mono">{team1Hype}%</span>
+              </div>
+              {/* LED progress bar */}
+              <div className="h-4 bg-slate-900 rounded-full border border-black overflow-hidden relative shadow-inner">
+                <div
+                  className="h-full bg-gradient-to-r from-rose-650 to-rose-400 transition-all duration-300 shadow-[0_0_10px_#f43f5e]"
+                  style={{ width: `${team1Hype}%` }}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => handleSendCheer(1)}
+                className="w-full py-2 bg-rose-500/10 border-2 border-rose-500/30 hover:border-rose-500 text-rose-400 hover:text-white font-black text-[10px] font-mono tracking-widest uppercase rounded-lg transition-all shadow hover:bg-rose-600 hover:shadow-[0_0_15px_#f43f5e]"
+              >
+                🔥 Cheer for {match.team1?.short_name}
+              </button>
+            </div>
+
+            {/* Team 2 Hype Box */}
+            <div className="space-y-2 bg-slate-950/40 p-4 rounded-xl border border-white/5">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-black text-cyan-400 font-mono tracking-wider">
+                  {match.team2?.short_name} Hype
+                </span>
+                <span className="text-xs font-black text-white font-mono">{team2Hype}%</span>
+              </div>
+              {/* LED progress bar */}
+              <div className="h-4 bg-slate-900 rounded-full border border-black overflow-hidden relative shadow-inner">
+                <div
+                  className="h-full bg-gradient-to-r from-cyan-650 to-cyan-400 transition-all duration-300 shadow-[0_0_10px_#06b6d4]"
+                  style={{ width: `${team2Hype}%` }}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => handleSendCheer(2)}
+                className="w-full py-2 bg-cyan-500/10 border-2 border-cyan-500/30 hover:border-cyan-500 text-cyan-400 hover:text-white font-black text-[10px] font-mono tracking-widest uppercase rounded-lg transition-all shadow hover:bg-cyan-650 hover:shadow-[0_0_15px_#06b6d4]"
+              >
+                🔥 Cheer for {match.team2?.short_name}
+              </button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* 3. TABS SELECTOR */}
       <section className="space-y-6">
         <div className="border-b border-white/5 flex gap-4 md:gap-6 overflow-x-auto whitespace-nowrap scrollbar-none pb-0.5">
@@ -1029,7 +1283,7 @@ export default function MatchDetail() {
                   : 'border-transparent text-slate-450 hover:text-white'
               }`}
             >
-              🏏 {match.team1?.short_name} Scorecard
+              🏏 {innings1.batting_team_id === match.team1_id ? match.team1?.short_name : match.team2?.short_name} Scorecard
             </button>
           )}
           {innings2 && (
@@ -1041,7 +1295,7 @@ export default function MatchDetail() {
                   : 'border-transparent text-slate-450 hover:text-white'
               }`}
             >
-              🏏 {match.team2?.short_name} Scorecard
+              🏏 {innings2.batting_team_id === match.team1_id ? match.team1?.short_name : match.team2?.short_name} Scorecard
             </button>
           )}
           <button
@@ -1448,23 +1702,55 @@ export default function MatchDetail() {
 
             {/* Right column: Fall of Wickets */}
             <div className="space-y-6">
-              <div className="bento-card p-5 space-y-4 border border-white/5!">
+              <div className="bento-card p-5 space-y-5 border border-white/5!">
                 <h3 className="text-[10px] font-black text-white uppercase tracking-widest border-b border-white/5 pb-2">
-                  Fall of Wickets
+                  ⚔️ Fall of Wickets
                 </h3>
-                {currentFOW.length > 0 ? (
-                  <div className="space-y-3">
-                    {currentFOW.map((wicket) => (
-                      <div key={wicket.number} className="flex justify-between items-center text-xs text-slate-350">
-                        <span className="font-semibold text-slate-400">
-                          {wicket.number} - <strong className="text-white font-extrabold">{wicket.score}</strong> ({wicket.batsmanName})
-                        </span>
-                        <span className="font-extrabold text-[10px] text-slate-500 uppercase">Over {wicket.over}</span>
+                
+                {/* Innings 1 FOW */}
+                {innings1 && (
+                  <div className="space-y-2.5 pb-2 border-b border-white/5 last:border-0 last:pb-0">
+                    <span className="block text-[9px] text-emerald-400 font-black uppercase tracking-wider">
+                      🏏 {innings1.batting_team_id === match.team1_id ? match.team1?.short_name : match.team2?.short_name} (Innings 1)
+                    </span>
+                    {inn1FOW.length > 0 ? (
+                      <div className="space-y-2 pl-2 border-l border-emerald-500/30">
+                        {inn1FOW.map((wicket) => (
+                          <div key={wicket.number} className="flex justify-between items-center text-xs text-slate-350">
+                            <span className="font-semibold text-slate-400">
+                              {wicket.number} - <strong className="text-white font-extrabold">{wicket.score}</strong> ({wicket.batsmanName})
+                            </span>
+                            <span className="font-extrabold text-[9px] text-slate-500 uppercase bg-slate-950 px-1.5 py-0.5 rounded border border-white/5">Ov {wicket.over}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    ) : (
+                      <p className="text-xs text-slate-500 italic pl-2">No wickets fallen.</p>
+                    )}
                   </div>
-                ) : (
-                  <p className="text-xs text-slate-550 italic">No wickets fallen in this innings.</p>
+                )}
+
+                {/* Innings 2 FOW */}
+                {innings2 && (
+                  <div className="space-y-2.5 pt-1">
+                    <span className="block text-[9px] text-yellow-450 font-black uppercase tracking-wider">
+                      🏏 {innings2.batting_team_id === match.team1_id ? match.team1?.short_name : match.team2?.short_name} (Innings 2)
+                    </span>
+                    {inn2FOW.length > 0 ? (
+                      <div className="space-y-2 pl-2 border-l border-yellow-500/30">
+                        {inn2FOW.map((wicket) => (
+                          <div key={wicket.number} className="flex justify-between items-center text-xs text-slate-350">
+                            <span className="font-semibold text-slate-400">
+                              {wicket.number} - <strong className="text-white font-extrabold">{wicket.score}</strong> ({wicket.batsmanName})
+                            </span>
+                            <span className="font-extrabold text-[9px] text-slate-500 uppercase bg-slate-950 px-1.5 py-0.5 rounded border border-white/5">Ov {wicket.over}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-slate-500 italic pl-2">No wickets fallen.</p>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
