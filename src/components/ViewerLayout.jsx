@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/useAuthStore'
-import { Home, Calendar, Trophy, Users, BarChart3, Image, User, LogOut, Menu, X } from 'lucide-react'
+import { Home, Calendar, Trophy, Users, BarChart3, Image, User, LogOut, Menu, X, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 
 export default function ViewerLayout() {
@@ -15,6 +15,7 @@ export default function ViewerLayout() {
     { label: 'Standings', path: '/points-table', icon: Trophy },
     { label: 'Teams', path: '/teams', icon: Users },
     { label: 'Stats', path: '/players', icon: BarChart3 },
+    { label: 'Simulator', path: '/simulator', icon: Sparkles },
     { label: 'Gallery', path: '/gallery', icon: Image },
   ]
 

@@ -19,6 +19,7 @@ import Players from './pages/viewer/Players'
 import PlayerProfile from './pages/viewer/PlayerProfile'
 import Gallery from './pages/viewer/Gallery'
 import MatchDetail from './pages/viewer/MatchDetail'
+import MatchSimulator from './pages/viewer/MatchSimulator'
 
 // Auth Pages
 import Login from './pages/auth/Login'
@@ -68,6 +69,7 @@ export default function App() {
             <Route path="players" element={<Players />} />
             <Route path="player/:id" element={<PlayerProfile />} />
             <Route path="gallery" element={<Gallery />} />
+            <Route path="simulator" element={<MatchSimulator />} />
           </Route>
 
           {/* 2. AUTHENTICATION PAGES */}
