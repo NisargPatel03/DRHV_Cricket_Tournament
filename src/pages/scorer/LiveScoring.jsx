@@ -844,54 +844,54 @@ export default function LiveScoring() {
         {/* Premium Toast Notification Banner */}
         {alertConfig && (
           <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 max-w-md w-full px-4 animate-scaleUp">
-            <div className={`flex items-start gap-3 p-4 rounded-2xl border shadow-xl backdrop-blur-md transition-all duration-350 ${
+            <div className={`flex items-start gap-3 p-4 rounded-none border-2 border-black shadow-[6px_6px_0_#000] backdrop-blur-md transition-all duration-350 ${
               alertConfig.type === 'success' 
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700' 
+                ? 'bg-emerald-500 text-black' 
                 : alertConfig.type === 'error' 
-                ? 'bg-red-500/10 border-red-500/20 text-red-700' 
-                : 'bg-amber-500/10 border-amber-500/20 text-amber-700'
+                ? 'bg-red-600 text-white' 
+                : 'bg-yellow-500 text-black'
             }`}>
-              <span className="text-lg">
+              <span className="text-lg font-bold">
                 {alertConfig.type === 'success' ? '✅' : alertConfig.type === 'error' ? '❌' : '⚠️'}
               </span>
               <div className="flex-1 min-w-0">
                 <p className="text-[10px] font-black uppercase tracking-wider mb-0.5">
                   {alertConfig.type === 'success' ? 'Success' : alertConfig.type === 'error' ? 'Error' : 'Notification'}
                 </p>
-                <p className="text-xs font-semibold leading-relaxed break-words">{alertConfig.message}</p>
+                <p className="text-xs font-bold leading-relaxed break-words font-mono">{alertConfig.message}</p>
               </div>
               <button 
                 type="button"
                 onClick={() => setAlertConfig(null)}
-                className="text-xs font-bold hover:opacity-75 shrink-0 pl-1"
+                className="text-xs font-black hover:opacity-75 shrink-0 pl-1"
               >
                 ✕
               </button>
             </div>
           </div>
         )}
-        <Link to="/scorer" className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to Assigned Roster
+        <Link to="/scorer" className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors font-mono">
+          <ArrowLeft className="w-4 h-4 stroke-[3]" /> Back to Assigned Roster
         </Link>
 
-        <form onSubmit={handleInningsSetupSubmit} className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 space-y-6 shadow-sm">
-          <div className="border-b border-slate-100 pb-3">
-            <span className="text-[10px] text-emerald-600 font-extrabold uppercase tracking-widest block leading-none">
+        <form onSubmit={handleInningsSetupSubmit} className="neo-brutalist-card p-6 md:p-8 space-y-6">
+          <div className="border-b-2 border-black pb-3">
+            <span className="text-[10px] text-emerald-450 font-black uppercase tracking-wider block leading-none font-mono">
               Innings {match.current_innings} Initial Setup
             </span>
-            <h1 className="text-xl font-black text-slate-800 uppercase tracking-tight mt-1">Configure Crease & Bowler</h1>
-            <p className="text-slate-400 text-xs mt-0.5">Select the opening batters and opening bowler for this innings to begin scoring</p>
+            <h1 className="text-xl font-black text-white uppercase tracking-tight mt-1">Configure Crease & Bowler</h1>
+            <p className="text-slate-400 text-xs mt-0.5 font-mono">Select the opening batters and opening bowler for this innings to begin scoring</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Striker */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
                 Opening Batter (Striker)
               </label>
               <select
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full neo-brutalist-select py-2.5 px-3 text-xs"
                 value={openingStrikerId}
                 onChange={(e) => setOpeningStrikerId(e.target.value)}
               >
@@ -906,12 +906,12 @@ export default function LiveScoring() {
 
             {/* Non striker */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
                 Opening Batter (Non-Striker)
               </label>
               <select
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full neo-brutalist-select py-2.5 px-3 text-xs"
                 value={openingNonStrikerId}
                 onChange={(e) => setOpeningNonStrikerId(e.target.value)}
               >
@@ -926,12 +926,12 @@ export default function LiveScoring() {
 
             {/* Bowler */}
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 font-mono">
                 Opening Bowler
               </label>
               <select
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-3 text-xs text-slate-700 focus:outline-none focus:border-emerald-500"
+                className="w-full neo-brutalist-select py-2.5 px-3 text-xs"
                 value={openingBowlerId}
                 onChange={(e) => setOpeningBowlerId(e.target.value)}
               >
@@ -945,11 +945,11 @@ export default function LiveScoring() {
             </div>
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-slate-100">
+          <div className="flex justify-end pt-4 border-t-2 border-black">
             <button
               type="submit"
               disabled={updateInningsMutation.isPending}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider py-3 px-6 rounded-xl shadow-lg shadow-emerald-600/10 flex items-center gap-1.5 transition-colors border border-emerald-600 disabled:opacity-50"
+              className="bg-emerald-500 hover:bg-emerald-600 text-black font-black text-xs uppercase tracking-wider py-3 px-6 rounded-none flex items-center gap-1.5 transition-all neo-brutalist-btn shadow-[4px_4px_0_#000]"
             >
               {updateInningsMutation.isPending ? 'Configuring Crease...' : 'Activate Scoring Control Board'}
             </button>
