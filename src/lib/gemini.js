@@ -4,19 +4,54 @@
  */
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+/** Must match a model with non-zero quota in AI Studio → Rate limits */
+const GEMINI_MODEL = import.meta.env.VITE_GEMINI_MODEL || "gemini-2.5-flash";
+const GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/models";
+
+function geminiGenerateUrl(model) {
+  return `${GEMINI_API_BASE}/${model}:generateContent?key=${GEMINI_API_KEY}`;
+}
+
+function formatGeminiError(message) {
+  const isLimitZero = /limit:\s*0/i.test(message);
+  const isQuota = /quota exceeded|resource exhausted|429/i.test(message);
+  const isRetryable = /please retry in/i.test(message);
+
+  if (isLimitZero) {
+    return (
+      "AI insights are unavailable: your Google project has no free-tier quota for this model (limit: 0). " +
+      "This is not the same as hitting a daily cap. In Google AI Studio, open your project → Rate limits and confirm quotas are non-zero, " +
+      "or enable billing on the project (free usage still applies within limits). " +
+      "You can also set VITE_GEMINI_MODEL in .env to another model listed there."
+    );
+  }
+  if (isQuota && isRetryable) {
+    return (
+      "AI insights are temporarily rate-limited (requests per minute). Wait about a minute and try again. " +
+      "Check usage at https://ai.dev/rate-limit"
+    );
+  }
+  if (isQuota) {
+    return (
+      "AI insights are unavailable: daily or per-minute quota reached for this model. " +
+      "On your plan, Gemini 2.5 Flash allows about 20 requests/day — try again tomorrow. " +
+      "Check usage at https://ai.dev/rate-limit"
+    );
+  }
+  return `Error generating AI analysis: ${message}. Please check your network connection and API configuration.`;
+}
 
 /**
  * Common call helper to send prompt to Gemini.
  */
-async function callGemini(prompt) {
+async function callGemini(prompt, model = GEMINI_MODEL) {
   if (!GEMINI_API_KEY) {
     console.warn("Gemini API key is missing in your environment configuration.");
     return "AI insights are currently unavailable because the API Key is not configured.";
   }
 
   try {
-    const response = await fetch(GEMINI_API_URL, {
+    const response = await fetch(geminiGenerateUrl(model), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,7 +80,7 @@ async function callGemini(prompt) {
     return resultText || "Sorry, I was unable to compile the analysis at this time.";
   } catch (error) {
     console.error("Error communicating with Gemini API:", error);
-    return `Error generating AI analysis: ${error.message}. Please check your network connection and API quotas.`;
+    return formatGeminiError(error.message);
   }
 }
 
