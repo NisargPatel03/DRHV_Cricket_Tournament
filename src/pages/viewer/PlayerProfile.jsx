@@ -5,6 +5,8 @@ import { supabase } from '../../lib/supabase'
 import Spinner from '../../components/Spinner'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { User, Shield, BarChart3, Trophy, Medal, Sparkles, TrendingUp, Cpu } from 'lucide-react'
+import { generatePlayerInsights } from '../../lib/gemini'
+
 const parseInlineMarkdown = (text) => {
   if (!text) return "";
   const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/g);

@@ -4,6 +4,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import Spinner from '../../components/Spinner'
 import { Trophy, Calendar, Users, Eye, Play, ArrowLeft, Image, Shield, MessageCircle, Volume2, VolumeX, Sparkles, Cpu } from 'lucide-react'
+import { generateMatchSummary, generateAICommentary } from '../../lib/gemini'
+
 const parseInlineMarkdown = (text) => {
   if (!text) return "";
   const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/g);
