@@ -19,8 +19,33 @@ This project integrates Generative AI directly into the browser client, leveragi
 * **How it works**: Fully integrates scorecard databases and dynamic partnership logs. Upon clicking **"Draft Match Summary"**, Gemini synthesizes the innings totals, strike rates, partnership curves, and bowling margins into a dramatic, highly engaging newspaper-style sports column, complete with key strategic takeaways!
 
 ### 3. 📈 AI Player Scouting & Performance Coaching
-* **Where to find**: Clicking on any player profile page.
 * **How it works**: Compiles historical batting logs, bowling logs, high scores, strike rates, and recent match forms. Clicking **"Analyze Player Performance"** compiles these stats into an elite scouting card displaying a motivational tagline, key statistical strengths, actionable improvement points, and professional tactical recommendations.
+
+---
+
+## ✨ Core Standard Features
+
+Beyond the cutting-edge AI integrations, this portal provides a robust, fully automated system for cricket league management:
+
+### 1. 🏏 Real-time Scorer Panel & Dashboard
+* **Dynamic Scorer Control**: A secure, interactive scoring console for match officials to input ball-by-ball outcomes (runs, wickets, extras).
+* **Automated Scorecard Calculations**: Instantly computes run rates, strike rates, individual averages, dynamic partnership charts, and fall-of-wickets (FOW) lists in real-time.
+* **Granular Extra Counters**: Dynamically records and segregates wides, no-balls, byes, and leg-byes.
+
+### 2. 📊 Automated Points Table & Standings
+* **Automated League Calculations**: Automatically handles points distribution (wins, losses, ties) and computes Net Run Rates (NRR) to rank housing society teams accurately.
+
+### 3. 📅 Interactive Match Center & Scorecards
+* **Complete Fixture Timeline**: Categorizes matches into Live, Upcoming, and Completed segments.
+* **Double-Innings Scorecard Details**: Allows users to expand completed or live matches to view highly detailed batting scorecards (runs, balls, strike rates, boundaries) and bowling analyses (overs, maidens, runs conceded, wickets, economy).
+
+### 4. 👥 Squad Hubs & Individual Player Profiles
+* **Comprehensive Career Stats**: Dedicated player profiles displaying batting averages, bowling logs, career runs, high scores, and wickets.
+* **Interactive Form History**: Recharts-based interactive graphs tracking a player's run or wicket logs across recent matches.
+
+### 5. 💬 Live Fan Engagement Soundboard & Chat
+* **Live Chat**: Connects society members via a real-time messaging column during live matches.
+* **Interactive Soundboard**: Lets viewers sound drums, horns, or cheers to boost league engagement!
 
 ---
 
