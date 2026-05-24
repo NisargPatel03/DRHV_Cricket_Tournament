@@ -3,12 +3,25 @@ import { useParams, Link } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import Spinner from '../../components/Spinner'
-import { Trophy, Calendar, Users, Eye, Play, ArrowLeft, Image, Shield, MessageCircle } from 'lucide-react'
+import { Trophy, Calendar, Users, Eye, Play, ArrowLeft, Image, Shield, MessageCircle, Volume2, VolumeX, Sparkles, Cpu } from 'lucide-react'
+const parseInlineMarkdown = (text) => {
+  if (!text) return "";
+  const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/g);
+  return parts.map((part, index) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={index} className="font-extrabold text-white">{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith('*') && part.endsWith('*')) {
+      return <em key={index} className="italic text-slate-100">{part.slice(1, -1)}</em>;
+    }
+    return part;
+  });
+};
 
 export default function MatchDetail() {
   const { id } = useParams()
   const queryClient = useQueryClient()
-  const [activeTab, setActiveTab] = useState('live') // 'live', 'scorecard1', 'scorecard2', 'gallery'
+  const [activeTab, setActiveTab] = useState('live') // 'live', 'scorecard1', 'scorecard2', 'gallery', 'ainews'
   const [lightboxImg, setLightboxImg] = useState(null)
 
   // Inner live sub-tab states
@@ -21,6 +34,14 @@ export default function MatchDetail() {
   // Crowd Hype Meter States
   const [team1Hype, setTeam1Hype] = useState(50)
   const [team2Hype, setTeam2Hype] = useState(50)
+
+  // AI Feature States
+  const [aiSummary, setAiSummary] = useState('')
+  const [loadingAiSummary, setLoadingAiSummary] = useState(false)
+  const [aiVoiceEnabled, setAiVoiceEnabled] = useState(false)
+  const [latestBallId, setLatestBallId] = useState(null)
+  const [loadingBallAiCommentary, setLoadingBallAiCommentary] = useState(null) // tracks if a specific ball's commentary is loading
+  const [enhancedBallCommentaries, setEnhancedBallCommentaries] = useState({}) // cache for custom ball commentary strings
 
 
   // 5B. Fetch Fan Chats
@@ -359,6 +380,152 @@ export default function MatchDetail() {
     return () => clearInterval(interval)
   }, [match])
 
+  // React-safe declarations before early returns
+  const innings1 = innings?.find((i) => i.innings_number === 1)
+  const innings2 = innings?.find((i) => i.innings_number === 2)
+  const currentInnings = innings?.find((i) => i.innings_number === match?.current_innings) || innings1
+  const currentBalls = balls?.filter((b) => b.innings_id === currentInnings?.id) || []
+
+  // Dynamic Commentary Feed generation
+  const generateCommentaryFeed = () => {
+    if (!currentBalls || currentBalls.length === 0) return []
+
+    // Last 10 balls, reversed so latest is top
+    return [...currentBalls]
+      .slice(-10)
+      .reverse()
+      .map((ball, idx) => {
+        const fairBalls = currentBalls.slice(0, currentBalls.indexOf(ball) + 1).filter((b) => b.extra_type !== 'wide' && b.extra_type !== 'no_ball').length
+        const overVal = `${Math.floor((fairBalls - 1) / 6)}.${((fairBalls - 1) % 6) + 1}`
+        
+        let eventText = ''
+        let bgClass = 'bg-slate-900 border-slate-800'
+        let borderClass = 'border-l-slate-600'
+
+        if (ball.is_wicket) {
+          eventText = `OUT! ${ball.wicket_type.toUpperCase()}! ${ball.batsman?.name} departs.`
+          bgClass = 'bg-red-500/5 border-red-500/20'
+          borderClass = 'border-l-red-500'
+        } else if (ball.extra_type !== 'none') {
+          eventText = `${ball.extra_type.toUpperCase()}! ${ball.runs_extras} extra runs conceded.`
+          bgClass = 'bg-amber-500/5 border-amber-500/20'
+          borderClass = 'border-l-amber-500'
+        } else if (ball.runs_batsman === 4) {
+          eventText = `FOUR runs! Terrific shot by ${ball.batsman?.name} off ${ball.bowler?.name}. Cracking boundary.`
+          bgClass = 'bg-blue-500/5 border-blue-500/20'
+          borderClass = 'border-l-blue-500'
+        } else if (ball.runs_batsman === 6) {
+          eventText = `SIX runs! High in the air and clearing the ropes! Spectacular maximum from ${ball.batsman?.name}.`
+          bgClass = 'bg-purple-500/5 border-purple-500/20'
+          borderClass = 'border-l-purple-500'
+        } else if (ball.runs_batsman === 0) {
+          eventText = `Dot ball. Bowled tidy length by ${ball.bowler?.name}.`
+        } else {
+          eventText = `${ball.runs_batsman} run(s) taken. Tucked away gently into the gap.`
+          bgClass = 'bg-emerald-500/5 border-emerald-500/20'
+          borderClass = 'border-l-emerald-500'
+        }
+
+        return {
+          id: ball.id,
+          over: overVal,
+          text: `Over ${overVal}: ${ball.bowler?.name} to ${ball.batsman?.name}. ${eventText}`,
+          bgClass,
+          borderClass
+        }
+      })
+  }
+
+  const commentaryFeed = generateCommentaryFeed()
+
+  // Read cache on tab trigger or mount
+  useEffect(() => {
+    if (!id) return
+    const cacheKey = `match_ai_summary_${id}`
+    const cached = localStorage.getItem(cacheKey)
+    if (cached && !cached.startsWith("Error generating AI analysis") && !cached.startsWith("AI insights are currently unavailable")) {
+      setAiSummary(cached)
+    } else {
+      setAiSummary('')
+    }
+  }, [id])
+
+  const handleGenerateNews = async () => {
+    if (!match) return
+    
+    setLoadingAiSummary(true)
+    try {
+      const summaryText = await generateMatchSummary(match, innings, squads)
+      setAiSummary(summaryText)
+      if (summaryText && !summaryText.startsWith("Error generating AI analysis") && !summaryText.startsWith("AI insights are currently unavailable")) {
+        localStorage.setItem(`match_ai_summary_${id}`, summaryText)
+      }
+    } catch (err) {
+      console.error("AI news summary error:", err)
+      setAiSummary("Error generating AI analysis. Please check your network connection and API quotas.")
+    } finally {
+      setLoadingAiSummary(false)
+    }
+  }
+
+  // Live voice commentary narrator
+  useEffect(() => {
+    if (!aiVoiceEnabled || !commentaryFeed || commentaryFeed.length === 0) return
+
+    const latestBall = commentaryFeed[0]
+    if (latestBall && latestBall.id !== latestBallId) {
+      setLatestBallId(latestBall.id)
+      
+      // Determine what to say: say the enhanced commentary if present, else standard
+      const textToSpeak = enhancedBallCommentaries[latestBall.id] || latestBall.text
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+        const utterance = new SpeechSynthesisUtterance(textToSpeak)
+        utterance.rate = 1.05
+        utterance.pitch = 1.0
+        window.speechSynthesis.speak(utterance)
+      }
+    }
+  }, [commentaryFeed, aiVoiceEnabled, latestBallId, enhancedBallCommentaries])
+
+  const handleEnhanceCommentary = async (ball) => {
+    if (enhancedBallCommentaries[ball.id]) {
+      // If already enhanced, speak it again!
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+        const utterance = new SpeechSynthesisUtterance(enhancedBallCommentaries[ball.id])
+        utterance.rate = 1.05
+        utterance.pitch = 1.0
+        window.speechSynthesis.speak(utterance)
+      }
+      return
+    }
+
+    setLoadingBallAiCommentary(ball.id)
+    try {
+      const result = await generateAICommentary(ball)
+      setEnhancedBallCommentaries((prev) => ({
+        ...prev,
+        [ball.id]: result
+      }))
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel()
+        const utterance = new SpeechSynthesisUtterance(result)
+        utterance.rate = 1.05
+        utterance.pitch = 1.0
+        window.speechSynthesis.speak(utterance)
+      }
+    } catch (err) {
+      console.error("Error generating ball commentary:", err)
+    } finally {
+      setLoadingBallAiCommentary(null)
+    }
+  }
+
+
+
   const handleSendCheer = (teamNum) => {
     if (teamNum === 1) {
       setTeam1Hype((prev) => Math.min(prev + 8, 100))
@@ -601,11 +768,6 @@ export default function MatchDetail() {
   }
 
   // Prepping Innings helper details
-  const innings1 = innings?.find((i) => i.innings_number === 1)
-  const innings2 = innings?.find((i) => i.innings_number === 2)
-  const currentInnings = innings?.find((i) => i.innings_number === match.current_innings) || innings1
-
-  const currentBalls = balls?.filter((b) => b.innings_id === currentInnings?.id) || []
   const inn1Balls = balls?.filter((b) => b.innings_id === innings1?.id) || []
   const inn2Balls = balls?.filter((b) => b.innings_id === innings2?.id) || []
 
@@ -885,57 +1047,9 @@ export default function MatchDetail() {
   const inn1FOW = innings1 ? getFallOfWickets(inn1Balls, innings1.batting_team_id) : []
   const inn2FOW = innings2 ? getFallOfWickets(inn2Balls, innings2.batting_team_id) : []
 
-  // Dynamic Commentary Feed generation
-  const generateCommentaryFeed = () => {
-    if (!currentBalls || currentBalls.length === 0) return []
 
-    // Last 10 balls, reversed so latest is top
-    return [...currentBalls]
-      .slice(-10)
-      .reverse()
-      .map((ball, idx) => {
-        const fairBalls = currentBalls.slice(0, currentBalls.indexOf(ball) + 1).filter((b) => b.extra_type !== 'wide' && b.extra_type !== 'no_ball').length
-        const overVal = `${Math.floor((fairBalls - 1) / 6)}.${((fairBalls - 1) % 6) + 1}`
-        
-        let eventText = ''
-        let bgClass = 'bg-slate-900 border-slate-800'
-        let borderClass = 'border-l-slate-600'
 
-        if (ball.is_wicket) {
-          eventText = `OUT! ${ball.wicket_type.toUpperCase()}! ${ball.batsman?.name} departs.`
-          bgClass = 'bg-red-500/5 border-red-500/20'
-          borderClass = 'border-l-red-500'
-        } else if (ball.extra_type !== 'none') {
-          eventText = `${ball.extra_type.toUpperCase()}! ${ball.runs_extras} extra runs conceded.`
-          bgClass = 'bg-amber-500/5 border-amber-500/20'
-          borderClass = 'border-l-amber-500'
-        } else if (ball.runs_batsman === 4) {
-          eventText = `FOUR runs! Terrific shot by ${ball.batsman?.name} off ${ball.bowler?.name}. Cracking boundary.`
-          bgClass = 'bg-blue-500/5 border-blue-500/20'
-          borderClass = 'border-l-blue-500'
-        } else if (ball.runs_batsman === 6) {
-          eventText = `SIX runs! High in the air and clearing the ropes! Spectacular maximum from ${ball.batsman?.name}.`
-          bgClass = 'bg-purple-500/5 border-purple-500/20'
-          borderClass = 'border-l-purple-500'
-        } else if (ball.runs_batsman === 0) {
-          eventText = `Dot ball. Bowled tidy length by ${ball.bowler?.name}.`
-        } else {
-          eventText = `${ball.runs_batsman} run(s) taken. Tucked away gently into the gap.`
-          bgClass = 'bg-emerald-500/5 border-emerald-500/20'
-          borderClass = 'border-l-emerald-500'
-        }
 
-        return {
-          id: ball.id,
-          over: overVal,
-          text: `Over ${overVal}: ${ball.bowler?.name} to ${ball.batsman?.name}. ${eventText}`,
-          bgClass,
-          borderClass
-        }
-      })
-  }
-
-  const commentaryFeed = generateCommentaryFeed()
 
   // Ball tracker dot render helper
   const getBallTrackerColorClass = (ball) => {
@@ -1308,6 +1422,16 @@ export default function MatchDetail() {
           >
             🖼️ Match Gallery ({photos?.length || 0})
           </button>
+          <button
+            onClick={() => setActiveTab('ainews')}
+            className={`py-3 text-xs md:text-xs font-black tracking-widest uppercase border-b-2 px-1 relative transition-colors ${
+              activeTab === 'ainews'
+                ? 'border-emerald-400 text-emerald-400'
+                : 'border-transparent text-slate-450 hover:text-white'
+            }`}
+          >
+            🤖 AI Match News
+          </button>
         </div>
 
         {/* Tab 1: Match Center */}
@@ -1364,24 +1488,82 @@ export default function MatchDetail() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-scaleUp">
                   {/* Commentary Column */}
                   <div className="space-y-4">
-                    <h3 className="text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-1.5 border-b border-white/5 pb-2">
-                      🎙️ Ball-by-Ball Feed
-                    </h3>
+                    <div className="flex justify-between items-center border-b border-white/5 pb-2">
+                      <h3 className="text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-1.5">
+                        🎙️ Ball-by-Ball Feed
+                      </h3>
+                      
+                      {/* Web Speech support check */}
+                      {'speechSynthesis' in window && (
+                        <div className="flex items-center gap-2 bg-slate-950/60 border border-white/5 px-2 py-0.5 rounded-lg shadow-sm">
+                          <span className="text-[8px] text-slate-450 font-black uppercase tracking-wider flex items-center gap-1">
+                            {aiVoiceEnabled ? (
+                              <Volume2 className="w-3 h-3 text-emerald-400 animate-pulse" />
+                            ) : (
+                              <VolumeX className="w-3 h-3 text-slate-500" />
+                            )}
+                            Voice Reader
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setAiVoiceEnabled(!aiVoiceEnabled)}
+                            className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-wider transition-all border ${
+                              aiVoiceEnabled
+                                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                                : 'bg-slate-900 border-white/5 text-slate-450 hover:text-white'
+                            }`}
+                          >
+                            {aiVoiceEnabled ? 'ON' : 'OFF'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
                     {commentaryFeed.length > 0 ? (
                       <div className="space-y-3 max-h-[480px] overflow-y-auto pr-1 scrollbar-thin">
-                        {commentaryFeed.map((feed) => (
-                          <div
-                            key={feed.id}
-                            className={`p-3 rounded-xl border border-white/5 border-l-4 bg-slate-900/15 flex gap-3 transition-all duration-200 ${feed.bgClass} ${feed.borderClass}`}
-                          >
-                            <span className="px-2 py-0.5 bg-slate-950 border border-white/5 text-[9px] font-black rounded h-fit shrink-0">
-                              {feed.over}
-                            </span>
-                            <p className="text-xs font-semibold text-slate-200 leading-relaxed">
-                              {feed.text}
-                            </p>
-                          </div>
-                        ))}
+                        {commentaryFeed.map((feed) => {
+                          const originalBall = currentBalls?.find((b) => b.id === feed.id)
+                          const enhancedText = enhancedBallCommentaries[feed.id]
+
+                          return (
+                            <div
+                              key={feed.id}
+                              className={`p-3 rounded-xl border border-white/5 border-l-4 bg-slate-900/15 flex flex-col gap-2 transition-all duration-200 ${feed.bgClass} ${feed.borderClass}`}
+                            >
+                              <div className="flex gap-3">
+                                <span className="px-2 py-0.5 bg-slate-950 border border-white/5 text-[9px] font-black rounded h-fit shrink-0">
+                                  {feed.over}
+                                </span>
+                                <p className="text-xs font-semibold text-slate-200 leading-relaxed flex-1">
+                                  {enhancedText ? (
+                                    <span className="block">
+                                      <span className="inline-flex items-center gap-1 text-[8px] bg-emerald-500/10 border border-emerald-500/20 px-1 rounded text-emerald-400 font-mono font-black uppercase tracking-widest mr-1.5">
+                                        🤖 AI commentator
+                                      </span>
+                                      {enhancedText}
+                                    </span>
+                                  ) : (
+                                    feed.text
+                                  )}
+                                </p>
+                              </div>
+                              
+                              {originalBall && (
+                                <div className="flex justify-end pt-0.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleEnhanceCommentary(originalBall)}
+                                    disabled={loadingBallAiCommentary === feed.id}
+                                    className="inline-flex items-center gap-1 text-[8px] font-black uppercase tracking-wider bg-slate-950 hover:bg-slate-900 border border-white/5 px-2 py-0.5 rounded text-slate-400 hover:text-white transition-colors disabled:opacity-50"
+                                  >
+                                    <Sparkles className="w-2.5 h-2.5 text-emerald-400" />
+                                    {loadingBallAiCommentary === originalBall.id ? 'Tuning Radio...' : enhancedText ? 'Replay Voice' : 'Ask AI commentator'}
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
                       </div>
                     ) : (
                       <div className="bento-card p-8 text-center text-slate-450 border border-white/5!">
@@ -1942,6 +2124,121 @@ export default function MatchDetail() {
                 </p>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Tab 5: AI Match News Flash */}
+        {activeTab === 'ainews' && (
+          <div className="space-y-6 animate-scaleUp">
+            <div className="bento-card relative overflow-hidden border border-white/5! p-6 md:p-8">
+              {/* Pulsing decoration */}
+              <div className="absolute -top-12 -right-12 w-36 h-36 bg-emerald-500/5 rounded-full blur-3xl animate-pulse"></div>
+              <div className="absolute -bottom-12 -left-12 w-36 h-36 bg-purple-500/5 rounded-full blur-3xl animate-pulse"></div>
+
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-white/5 pb-4 mb-6 gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                    <Cpu className="w-5 h-5 animate-spin-slow" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-emerald-450 font-black uppercase tracking-widest font-mono block">
+                      Google Gemini AI Reporter
+                    </span>
+                    <h2 className="text-sm font-extrabold text-white uppercase tracking-wider mt-0.5">
+                      Match Narrative & Analysis
+                    </h2>
+                  </div>
+                </div>
+
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-950/80 border border-white/5 rounded-lg text-[9px] font-black font-mono uppercase text-slate-400">
+                  <Sparkles className="w-3 h-3 text-emerald-400 animate-pulse" /> Real-time Generation
+                </span>
+              </div>
+
+              {loadingAiSummary ? (
+                <div className="py-12 text-center space-y-4">
+                  <Spinner message="Gemini AI is analyzing overs, run rates, boundary distribution, and player forms..." />
+                  <p className="text-[10px] text-slate-550 uppercase tracking-widest animate-pulse max-w-md mx-auto font-semibold">
+                    Drafting a professional dramatic sports news flash article for society fans...
+                  </p>
+                </div>
+              ) : aiSummary ? (
+                <div className="space-y-6">
+                  <article className="prose prose-invert max-w-none space-y-4">
+                    <div className="bg-slate-950/40 border border-white/5 rounded-2xl p-6 md:p-8 shadow-inner relative">
+                      <span className="absolute top-4 right-6 text-7xl font-serif text-white/5 select-none pointer-events-none">”</span>
+                      <div className="space-y-2">
+                        {aiSummary.split('\n').map((para, idx) => {
+                          const trimmed = para.trim()
+                          if (!trimmed) return null
+                          
+                          // Custom light Markdown render rules
+                          if (trimmed.startsWith('# ')) {
+                            return (
+                              <h1 key={idx} className="text-xl md:text-3xl font-black text-white mt-2 mb-6 tracking-tight uppercase leading-tight border-b border-white/5 pb-3">
+                                {trimmed.replace('# ', '')}
+                              </h1>
+                            )
+                          }
+                          if (trimmed.startsWith('## ')) {
+                            return (
+                              <h2 key={idx} className="text-sm md:text-base font-black text-emerald-400 mt-6 mb-3 tracking-wider uppercase font-mono">
+                                {trimmed.replace('## ', '')}
+                              </h2>
+                            )
+                          }
+                          if (trimmed.startsWith('### ')) {
+                            return (
+                              <h3 key={idx} className="text-xs md:text-sm font-black text-slate-200 mt-4 mb-2 tracking-wide uppercase font-mono">
+                                {trimmed.replace('### ', '')}
+                              </h3>
+                            )
+                          }
+                          if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
+                            return (
+                              <li key={idx} className="text-xs md:text-sm text-slate-200 font-semibold list-disc list-inside ml-4 py-1.5 leading-relaxed">
+                                {parseInlineMarkdown(trimmed.replace(/^[\*\-]\s+/, ''))}
+                              </li>
+                            )
+                          }
+                          return (
+                            <p key={idx} className="text-xs md:text-sm text-slate-300 font-medium leading-relaxed my-3">
+                              {parseInlineMarkdown(trimmed)}
+                            </p>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </article>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={handleGenerateNews}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black uppercase rounded-lg tracking-wider transition-all active:scale-95 cursor-pointer border border-white/5"
+                    >
+                      <Sparkles className="w-3 h-3 text-emerald-400" /> Regenerate Match Editorial
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="py-12 text-center space-y-5 border border-dashed border-white/5 rounded-2xl bg-slate-950/20">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-center text-emerald-455 mx-auto animate-pulse">
+                    <Sparkles className="w-6 h-6" />
+                  </div>
+                  <div className="space-y-1 px-4">
+                    <h3 className="text-xs font-black text-white uppercase tracking-wider">AI Sports Editorial Ready</h3>
+                    <p className="text-[10px] text-slate-500 max-w-sm mx-auto leading-relaxed font-semibold">
+                      Google Gemini AI will synthesize innings, partnership curves, and bowling margins into a dramatic newspaper-style column.
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleGenerateNews}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-slate-950 text-xs font-black uppercase rounded-xl tracking-wider cursor-pointer shadow-lg shadow-emerald-500/15"
+                  >
+                    <Cpu className="w-3.5 h-3.5" /> Draft Match Summary
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </section>
