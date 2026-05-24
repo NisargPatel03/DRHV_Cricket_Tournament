@@ -35,7 +35,9 @@ async function callGemini(prompt) {
     });
 
     if (!response.ok) {
-      throw new Error(`Gemini API responded with status ${response.status}`);
+      const errData = await response.json().catch(() => ({}));
+      const errMsg = errData.error?.message || `Gemini API responded with status ${response.status}`;
+      throw new Error(errMsg);
     }
 
     const data = await response.json();
@@ -43,7 +45,7 @@ async function callGemini(prompt) {
     return resultText || "Sorry, I was unable to compile the analysis at this time.";
   } catch (error) {
     console.error("Error communicating with Gemini API:", error);
-    return "Error generating AI analysis. Please check your network connection and API quotas.";
+    return `Error generating AI analysis: ${error.message}. Please check your network connection and API quotas.`;
   }
 }
 
