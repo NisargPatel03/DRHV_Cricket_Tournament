@@ -102,9 +102,9 @@ npm install
 ### 2. Configure Environment Variables
 Create a file named `.env` in the root directory of your project:
 ```env
-VITE_SUPABASE_URL=https://vlvxhfzrpfjqrlksimdr.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-VITE_GEMINI_API_KEY=AIzaSy...
+VITE_SUPABASE_URL=your-supabase-project-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+VITE_GEMINI_API_KEY=your-google-gemini-api-key
 ```
 
 ### 3. Launch Development Server
